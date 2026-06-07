@@ -57,7 +57,7 @@ function useReveal() {
           }
         })
       },
-      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.08, rootMargin: '0px 0px -10px 0px' }
     )
     els.forEach(el => io.observe(el))
     return () => io.disconnect()
@@ -534,10 +534,10 @@ export default function LandingPage() {
 
       {/* ── HEADER ── */}
       <header
-        className={`sticky top-0.5 z-50 nav-scrolled border-b ${
+        className={`sticky top-0.5 z-50 nav-scrolled border-b transition-all duration-500 ${
           navScrolled
             ? 'bg-white/97 backdrop-blur-md border-[#e0d5cb]'
-            : 'bg-transparent border-transparent'
+            : 'bg-black/30 backdrop-blur-sm border-white/10'
         }`}
         style={navScrolled ? { boxShadow: '0 1px 20px rgba(45,36,32,0.09)' } : {}}
       >
@@ -549,7 +549,7 @@ export default function LandingPage() {
               <span className={`text-xl sm:text-2xl font-black tracking-tight transition-colors duration-400 ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white group-hover:text-[#d4a574]'}`} style={{ letterSpacing: '-0.02em' }}>
                 Ibu Siti
               </span>
-              <span className={`text-[9px] font-bold block -mt-0.5 tracking-[0.18em] uppercase transition-colors duration-400 ${navScrolled ? 'text-[#8b7355]' : 'text-white/50'}`}>
+              <span className={`text-[9px] font-bold block -mt-0.5 tracking-[0.18em] uppercase transition-colors duration-400 ${navScrolled ? 'text-[#8b7355]' : 'text-white/75'}`}>
                 Wedding & Fashion
               </span>
             </a>
@@ -717,7 +717,7 @@ export default function LandingPage() {
                 </h1>
 
                 <p
-                  className="text-white/60 leading-[1.8] mb-10 animate-fade-in-up max-w-md"
+                  className="text-white/85 leading-[1.8] mb-10 animate-fade-in-up max-w-md"
                   style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1.05rem)', animationDelay: '180ms' }}
                 >
                   Sewa gaun pengantin, kebaya tradisional & baju adat berkualitas premium untuk momen istimewa Anda.
@@ -749,7 +749,7 @@ export default function LandingPage() {
                       {i > 0 && <div className="w-px h-9 bg-white/12 mx-5" />}
                       <div>
                         <p className="text-white font-black leading-none tracking-tight" style={{ fontSize: 'clamp(1rem, 2.2vw, 1.2rem)' }}>{b.val}</p>
-                        <p className="text-white/40 text-[9px] uppercase tracking-[0.2em] mt-1.5">{b.lbl}</p>
+                        <p className="text-white/65 text-[9px] uppercase tracking-[0.2em] mt-1.5">{b.lbl}</p>
                       </div>
                     </div>
                   ))}
@@ -792,7 +792,7 @@ export default function LandingPage() {
         <div className="marquee-track select-none">
           {[...brandsFull, ...brandsFull].map((b, i) => (
             <span key={i} className="inline-flex items-center gap-6 px-6">
-              <span className="text-white/22 text-[10px] font-black uppercase tracking-[0.28em] whitespace-nowrap">{b}</span>
+              <span className="text-white/65 text-[10px] font-black uppercase tracking-[0.28em] whitespace-nowrap">{b}</span>
               <span className="text-[#d4a574]/30 text-[6px]">✦</span>
             </span>
           ))}
@@ -831,7 +831,7 @@ export default function LandingPage() {
                   {statsVisible ? statDisplays[i] : '—'}
                 </p>
                 <div className="w-6 h-px bg-[#d4a574]/30 mx-auto my-3 group-hover:w-12 transition-all duration-500 rounded-full" />
-                <p className="text-white/40 font-semibold uppercase tracking-[0.22em]" style={{ fontSize: '0.62rem' }}>{s.label}</p>
+                <p className="text-white/65 font-semibold uppercase tracking-[0.22em]" style={{ fontSize: '0.62rem' }}>{s.label}</p>
               </div>
             ))}
           </div>
@@ -927,7 +927,7 @@ export default function LandingPage() {
                 Pengantin Memilih<br />
                 <span className="font-serif italic text-[#d4a574]">Ibu Siti?</span>
               </h2>
-              <p className="text-white/50 leading-[1.8] mb-10 max-w-md" style={{ fontSize: 'clamp(0.85rem, 1.6vw, 0.95rem)' }}>
+              <p className="text-white/75 leading-[1.8] mb-10 max-w-md" style={{ fontSize: 'clamp(0.85rem, 1.6vw, 0.95rem)' }}>
                 Selama 29 tahun, kami telah mendampingi ribuan pasangan merayakan momen terindah — dengan koleksi premium, pelayanan tulus, dan harga terjangkau.
               </p>
               <button onClick={() => whatsapp()} className="btn-gold">
@@ -946,12 +946,12 @@ export default function LandingPage() {
               ].map((usp, i) => (
                 <div
                   key={usp.title}
-                  className="group bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-[#d4a574]/30 rounded-3xl p-6 transition-all duration-400 reveal cursor-default"
+                  className="group bg-white/[0.08] hover:bg-white/[0.14] border border-white/[0.15] hover:border-[#d4a574]/50 rounded-3xl p-6 transition-all duration-400 reveal cursor-default"
                   style={{ transitionDelay: `${i * 100}ms` }}
                 >
                   <span className="text-3xl block mb-4 group-hover:scale-110 transition-transform duration-300 origin-left">{usp.icon}</span>
-                  <h3 className="font-black text-white text-sm mb-2 group-hover:text-[#d4a574] transition-colors" style={{ letterSpacing: '-0.01em' }}>{usp.title}</h3>
-                  <p className="text-white/40 text-xs leading-relaxed group-hover:text-white/55 transition-colors">{usp.desc}</p>
+                  <h3 className="font-black text-white text-sm mb-2.5 group-hover:text-[#d4a574] transition-colors" style={{ letterSpacing: '-0.01em' }}>{usp.title}</h3>
+                  <p className="text-white/65 text-xs leading-relaxed group-hover:text-white/80 transition-colors">{usp.desc}</p>
                 </div>
               ))}
             </div>
@@ -1064,7 +1064,7 @@ export default function LandingPage() {
               {/* Category number */}
               <span className="absolute top-5 left-5 text-white/15 font-black" style={{ fontSize: '4rem', lineHeight: 1, letterSpacing: '-0.04em', fontFamily: 'Playfair Display, serif', fontStyle: 'italic' }}>01</span>
               <div className="absolute bottom-0 left-0 right-0 p-7 translate-y-2 group-hover:translate-y-0 transition-transform duration-400">
-                <p className="text-white/50 text-[9px] font-bold uppercase tracking-[0.28em] mb-2">{categories[0].count}</p>
+                <p className="text-white/75 text-[9px] font-bold uppercase tracking-[0.28em] mb-2">{categories[0].count}</p>
                 <h3 className="text-white font-black text-2xl mb-1" style={{ letterSpacing: '-0.02em' }}>{categories[0].name}</h3>
                 <p className="text-white/60 text-xs leading-relaxed mb-4 max-w-[200px]">{categories[0].desc}</p>
                 <span className="inline-flex items-center gap-2 text-[#d4a574] text-[10px] font-black uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-opacity duration-400">
@@ -1078,9 +1078,9 @@ export default function LandingPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e0b09]/88 via-[#1a1210]/25 to-transparent" />
                 <span className="absolute top-4 left-5 text-white/12 font-black" style={{ fontSize: '3rem', lineHeight: 1, letterSpacing: '-0.04em', fontFamily: 'Playfair Display, serif', fontStyle: 'italic' }}>0{i + 2}</span>
                 <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-1 group-hover:translate-y-0 transition-transform duration-400">
-                  <p className="text-white/50 text-[9px] font-bold uppercase tracking-[0.28em] mb-1.5">{cat.count}</p>
+                  <p className="text-white/75 text-[9px] font-bold uppercase tracking-[0.28em] mb-1.5">{cat.count}</p>
                   <h3 className="text-white font-black text-xl mb-1" style={{ letterSpacing: '-0.02em' }}>{cat.name}</h3>
-                  <p className="text-white/55 text-xs mb-3">{cat.desc}</p>
+                  <p className="text-white/75 text-xs mb-3">{cat.desc}</p>
                   <span className="inline-flex items-center gap-1.5 text-[#d4a574] text-[10px] font-black uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-opacity duration-400">
                     Lihat <ArrowRight size={10} />
                   </span>
@@ -1098,9 +1098,9 @@ export default function LandingPage() {
                 <span className="absolute top-3 right-4 text-white/10 font-black" style={{ fontSize: '3.5rem', lineHeight: 1, fontFamily: 'Playfair Display, serif', fontStyle: 'italic' }}>0{i + 1}</span>
                 <div className="absolute inset-0 flex items-end p-6">
                   <div>
-                    <p className="text-white/50 text-[9px] uppercase tracking-[0.22em] font-semibold mb-1.5">{cat.count}</p>
+                    <p className="text-white/75 text-[9px] uppercase tracking-[0.22em] font-semibold mb-1.5">{cat.count}</p>
                     <h3 className="text-white font-black text-xl mb-1" style={{ letterSpacing: '-0.02em' }}>{cat.name}</h3>
-                    <p className="text-white/60 text-xs">{cat.desc}</p>
+                    <p className="text-white/80 text-xs">{cat.desc}</p>
                   </div>
                 </div>
               </a>
@@ -1297,7 +1297,7 @@ export default function LandingPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e0b09]/85 via-[#1a1210]/30 to-transparent" />
                 <div className="absolute inset-0 flex items-end p-7 sm:p-9">
                   <div className="flex-1">
-                    <p className="text-white/45 text-[9px] uppercase tracking-[0.28em] font-bold mb-2">{col.items} Koleksi · {col.sub}</p>
+                    <p className="text-white/70 text-[9px] uppercase tracking-[0.28em] font-bold mb-2">{col.items} Koleksi · {col.sub}</p>
                     <h3 className="text-white font-black mb-5 group-hover:translate-y-[-2px] transition-transform duration-400" style={{ fontSize: 'clamp(1.2rem, 3vw, 2rem)', letterSpacing: '-0.02em' }}>{col.title}</h3>
                     <button
                       onClick={() => whatsapp(col.title)}
@@ -1442,7 +1442,7 @@ export default function LandingPage() {
             <span className="font-serif italic text-gradient-gold">Memukau</span><br />
             di Hari Istimewa?
           </h2>
-          <p className="text-white/45 leading-[1.8] mb-12 max-w-md mx-auto reveal" style={{ fontSize: 'clamp(0.85rem, 1.6vw, 0.95rem)' }}>
+          <p className="text-white/75 leading-[1.8] mb-12 max-w-md mx-auto reveal" style={{ fontSize: 'clamp(0.85rem, 1.6vw, 0.95rem)' }}>
             Hubungi kami untuk konsultasi gratis. Tim ahli kami siap membantu menemukan koleksi impian Anda.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center reveal">
@@ -1506,7 +1506,7 @@ export default function LandingPage() {
           {/* Links grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 pb-14 border-b border-white/[0.07] mb-10">
             <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-white/25 mb-5">Menu</p>
+              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-white/50 mb-5">Menu</p>
               <ul className="space-y-3">
                 {[
                   { label: 'Beranda', href: '#' },
@@ -1517,43 +1517,43 @@ export default function LandingPage() {
                   { label: 'FAQ', href: '#faq' },
                 ].map(({ label, href }) => (
                   <li key={label}>
-                    <a href={href} className="text-white/40 hover:text-white/80 text-xs font-medium transition-colors duration-200">{label}</a>
+                    <a href={href} className="text-white/60 hover:text-white/95 text-xs font-medium transition-colors duration-200">{label}</a>
                   </li>
                 ))}
               </ul>
             </div>
 
             <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-white/25 mb-5">Layanan</p>
+              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-white/50 mb-5">Layanan</p>
               <ul className="space-y-3">
                 {['Sewa Baju', 'Dekorasi Pernikahan', 'Konsultasi Styling', 'Rias Pengantin', 'Fotografi', 'Antar-jemput'].map(item => (
                   <li key={item}>
-                    <a href="#" className="text-white/40 hover:text-white/80 text-xs font-medium transition-colors duration-200">{item}</a>
+                    <a href="#" className="text-white/60 hover:text-white/95 text-xs font-medium transition-colors duration-200">{item}</a>
                   </li>
                 ))}
               </ul>
             </div>
 
             <div className="col-span-2">
-              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-white/25 mb-5">Kontak & Lokasi</p>
+              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-white/50 mb-5">Kontak & Lokasi</p>
               <ul className="space-y-4 mb-6">
                 <li className="flex items-start gap-3">
                   <div className="w-7 h-7 rounded-xl bg-white/[0.06] flex items-center justify-center flex-shrink-0 mt-0.5">
                     <MapPin size={12} className="text-[#d4a574]" />
                   </div>
-                  <span className="text-white/40 text-xs leading-relaxed font-medium">Jl. Contoh No. 123, Jakarta Selatan, DKI Jakarta 12345</span>
+                  <span className="text-white/65 text-xs leading-relaxed font-medium">Jl. Contoh No. 123, Jakarta Selatan, DKI Jakarta 12345</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="w-7 h-7 rounded-xl bg-white/[0.06] flex items-center justify-center flex-shrink-0">
                     <Phone size={12} className="text-[#d4a574]" />
                   </div>
-                  <a href="tel:+6281234567" className="text-white/40 hover:text-white/70 text-xs font-medium transition-colors">+62 812 3456 78</a>
+                  <a href="tel:+6281234567" className="text-white/65 hover:text-white/90 text-xs font-medium transition-colors">+62 812 3456 78</a>
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="w-7 h-7 rounded-xl bg-white/[0.06] flex items-center justify-center flex-shrink-0">
                     <MessageCircle size={12} className="text-[#d4a574]" />
                   </div>
-                  <span className="text-white/40 text-xs font-medium">Buka setiap hari — 08.00–21.00 WIB</span>
+                  <span className="text-white/65 text-xs font-medium">Buka setiap hari — 08.00–21.00 WIB</span>
                 </li>
               </ul>
               <button
@@ -1567,10 +1567,10 @@ export default function LandingPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-white/22 text-xs">© {new Date().getFullYear()} Ibu Siti Wedding & Fashion. Semua hak dilindungi.</p>
+            <p className="text-white/55 text-xs">© {new Date().getFullYear()} Ibu Siti Wedding & Fashion. Semua hak dilindungi.</p>
             <div className="flex gap-6">
               {['Kebijakan Privasi', 'Syarat & Ketentuan'].map(s => (
-                <a key={s} href="#" className="text-white/22 hover:text-white/50 text-xs transition-colors">{s}</a>
+                <a key={s} href="#" className="text-white/55 hover:text-white/80 text-xs transition-colors">{s}</a>
               ))}
             </div>
           </div>
