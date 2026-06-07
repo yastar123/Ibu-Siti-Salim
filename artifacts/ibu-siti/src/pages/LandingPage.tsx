@@ -529,12 +529,12 @@ export default function LandingPage() {
         <div
           className={`transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             navScrolled
-              ? 'mx-3 sm:mx-5 lg:mx-8 max-w-[1400px] xl:mx-auto bg-white/95 backdrop-blur-xl rounded-[20px] border border-[#e0d5cb]/70 px-3 sm:px-5'
-              : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
+              ? 'mx-4 sm:mx-8 lg:mx-14 xl:mx-auto xl:max-w-[1240px] bg-white/95 backdrop-blur-xl rounded-[20px] border border-[#e0d5cb]/70 px-4 sm:px-6'
+              : 'max-w-7xl mx-auto px-4 sm:px-8 lg:px-12'
           }`}
           style={navScrolled ? { boxShadow: '0 8px 40px rgba(45,36,32,0.13), 0 2px 8px rgba(45,36,32,0.06)' } : {}}
         >
-          <div className={`flex items-center justify-between gap-3 transition-all duration-500 ${navScrolled ? 'h-[58px]' : 'h-[68px]'}`}>
+          <div className={`flex items-center justify-between gap-3 transition-all duration-500 ${navScrolled ? 'h-[56px]' : 'h-[68px]'}`}>
 
             {/* Logo */}
             <a href="#" className="flex-shrink-0 group" aria-label="Ibu Siti - Beranda">
@@ -647,11 +647,7 @@ export default function LandingPage() {
 
         {/* Mobile menu drawer */}
         {mobileMenuOpen && (
-          <div
-            className={`lg:hidden mt-2 animate-slide-down ${
-              navScrolled ? 'mx-3 sm:mx-5 lg:mx-8' : 'mx-3'
-            }`}
-          >
+          <div className="lg:hidden mt-2 animate-slide-down mx-4 sm:mx-8">
             <div
               className="bg-white/96 backdrop-blur-xl rounded-[18px] border border-[#e0d5cb]/70 px-3 py-4 space-y-1"
               style={{ boxShadow: '0 8px 40px rgba(45,36,32,0.12)' }}
