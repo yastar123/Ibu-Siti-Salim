@@ -592,23 +592,24 @@ export default function LandingPage() {
               </button>
             </nav>
 
-            {/* Right icons */}
+            {/* Right icons — desktop only */}
             <div className="flex items-center gap-0.5 sm:gap-1">
+              {/* Icons only on lg+ */}
               <button
                 aria-label="Cari produk"
                 onClick={() => setSearchOpen(true)}
-                className={`p-2.5 rounded-full transition-colors group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
+                className={`hidden lg:flex p-2.5 rounded-full transition-colors group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
               >
                 <Search size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/90 group-hover:text-white'}`} />
               </button>
 
-              <button aria-label="Akun saya" className={`p-2.5 rounded-full transition-colors group hidden sm:flex ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}>
+              <button aria-label="Akun saya" className={`hidden lg:flex p-2.5 rounded-full transition-colors group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}>
                 <User size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/90 group-hover:text-white'}`} />
               </button>
 
               <button
                 aria-label="Wishlist"
-                className={`p-2.5 rounded-full transition-colors relative group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
+                className={`hidden lg:flex p-2.5 rounded-full transition-colors relative group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
               >
                 <Heart size={18} className={wishlist.length > 0 ? 'fill-[#d4a574] text-[#d4a574]' : `transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/90 group-hover:text-white'}`} />
                 {wishlist.length > 0 && (
@@ -620,7 +621,7 @@ export default function LandingPage() {
 
               <button
                 aria-label="Keranjang"
-                className={`p-2.5 rounded-full transition-colors relative group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
+                className={`hidden lg:flex p-2.5 rounded-full transition-colors relative group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
               >
                 <ShoppingBag size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/90 group-hover:text-white'}`} />
                 {cartCount > 0 && (
@@ -630,15 +631,19 @@ export default function LandingPage() {
                 )}
               </button>
 
-              {/* Mobile hamburger */}
+              {/* Mobile: hamburger only */}
               <button
                 aria-label={mobileMenuOpen ? 'Tutup menu' : 'Buka menu'}
                 onClick={() => setMobileMenuOpen(o => !o)}
-                className={`lg:hidden p-2.5 rounded-full transition-colors ml-0.5 ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
+                className={`lg:hidden p-2.5 rounded-full transition-colors ${
+                  navScrolled
+                    ? 'hover:bg-[#f5f0eb]'
+                    : 'bg-white/10 hover:bg-white/20'
+                }`}
               >
                 {mobileMenuOpen
-                  ? <X size={20} className={navScrolled ? 'text-[#2d2420]' : 'text-white'} />
-                  : <Menu size={20} className={navScrolled ? 'text-[#2d2420]' : 'text-white'} />
+                  ? <X size={22} className={navScrolled ? 'text-[#2d2420]' : 'text-white'} />
+                  : <Menu size={22} className={navScrolled ? 'text-[#2d2420]' : 'text-white'} />
                 }
               </button>
             </div>
