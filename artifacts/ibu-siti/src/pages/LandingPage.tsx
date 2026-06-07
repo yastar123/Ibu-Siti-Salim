@@ -439,8 +439,20 @@ export default function LandingPage() {
      RENDER
   ══════════════════════════════════ */
   return (
-    <div className="min-h-screen bg-[#faf8f6] overflow-x-hidden pb-16 sm:pb-0">
+    <div className="min-h-screen bg-[#faf8f6] overflow-x-hidden pb-20 lg:pb-0">
       <Cursor />
+
+      {/* ── Floating WhatsApp CTA (mobile only) ── */}
+      <div className={`lg:hidden fixed bottom-5 right-4 z-[90] transition-all duration-500 ${navScrolled ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0 pointer-events-none'}`}>
+        <button
+          onClick={() => whatsapp()}
+          className="flex items-center gap-2.5 bg-[#25D366] hover:bg-[#22c35e] text-white pl-4 pr-5 py-3.5 rounded-full shadow-[0_8px_32px_rgba(37,211,102,0.4)] active:scale-95 transition-all duration-200"
+          aria-label="Chat WhatsApp"
+        >
+          <MessageCircle size={20} className="flex-shrink-0" />
+          <span className="text-sm font-bold">Konsultasi</span>
+        </button>
+      </div>
 
       {/* ── Toast Notifications ── */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] flex flex-col gap-2 items-center pointer-events-none">
@@ -520,39 +532,40 @@ export default function LandingPage() {
       )}
 
       {/* ── HEADER ── */}
+      {/* Mobile: always floats (top-3, island). Desktop: conditional on scroll */}
       <header
-        className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          navScrolled ? 'top-3' : 'top-0'
+        className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] top-3 ${
+          navScrolled ? '' : 'lg:top-0'
         }`}
       >
-        {/* The inner island wrapper */}
+        {/* Island wrapper — always island on mobile, conditional on desktop */}
         <div
-          className={`transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            navScrolled
-              ? 'mx-4 sm:mx-8 lg:mx-14 xl:mx-auto xl:max-w-[1240px] bg-white/95 backdrop-blur-xl rounded-[20px] border border-[#e0d5cb]/70 px-4 sm:px-6'
-              : 'max-w-7xl mx-auto px-4 sm:px-8 lg:px-12'
-          }`}
-          style={navScrolled ? { boxShadow: '0 8px 40px rgba(45,36,32,0.13), 0 2px 8px rgba(45,36,32,0.06)' } : {}}
+          className={`transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
+            mx-4 bg-white/96 backdrop-blur-xl rounded-[22px] border border-[#e0d5cb]/70 px-4
+            ${navScrolled
+              ? 'sm:mx-8 lg:mx-14 xl:mx-auto xl:max-w-[1240px] sm:px-6'
+              : 'sm:mx-4 lg:mx-auto lg:bg-transparent lg:border-transparent lg:rounded-none lg:max-w-7xl lg:px-12 nav-island-shadow'
+            }`}
+          style={navScrolled
+            ? { boxShadow: '0 8px 40px rgba(45,36,32,0.13), 0 2px 8px rgba(45,36,32,0.06)' }
+            : {}
+          }
         >
-          <div className={`flex items-center justify-between gap-3 transition-all duration-500 ${navScrolled ? 'h-[56px]' : 'h-[68px]'}`}>
+          <div className={`flex items-center justify-between gap-3 h-[54px] lg:transition-all lg:duration-500 ${navScrolled ? 'lg:h-[56px]' : 'lg:h-[68px]'}`}>
 
-            {/* Logo */}
+            {/* Logo — dark on mobile always (white bg), conditional on desktop */}
             <a href="#" className="flex-shrink-0 group" aria-label="Ibu Siti - Beranda">
               <span
-                className={`font-black tracking-tight transition-all duration-500 ${
-                  navScrolled
-                    ? 'text-lg sm:text-xl text-[#2d2420] group-hover:text-[#8b7355]'
-                    : 'text-xl sm:text-2xl text-white group-hover:text-[#d4a574]'
+                className={`font-black tracking-tight text-[#2d2420] group-hover:text-[#8b7355] transition-colors duration-300 text-lg sm:text-xl ${
+                  navScrolled ? '' : 'lg:text-white lg:group-hover:text-[#d4a574]'
                 }`}
                 style={{ letterSpacing: '-0.02em' }}
               >
                 Ibu Siti
               </span>
-              <span
-                className={`text-[8px] font-bold block -mt-0.5 tracking-[0.18em] uppercase transition-all duration-500 ${
-                  navScrolled ? 'text-[#8b7355]' : 'text-white/75'
-                }`}
-              >
+              <span className={`text-[8px] font-bold block -mt-0.5 tracking-[0.18em] uppercase text-[#8b7355] transition-colors duration-300 ${
+                navScrolled ? '' : 'lg:text-white/75'
+              }`}>
                 Wedding & Fashion
               </span>
             </a>
@@ -573,11 +586,9 @@ export default function LandingPage() {
                   }`}
                 >
                   {label}
-                  <span
-                    className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full ${
-                      navScrolled ? 'bg-[#8b7355]' : 'bg-[#d4a574]'
-                    }`}
-                  />
+                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full ${
+                    navScrolled ? 'bg-[#8b7355]' : 'bg-[#d4a574]'
+                  }`} />
                 </a>
               ))}
               <button
@@ -592,58 +603,37 @@ export default function LandingPage() {
               </button>
             </nav>
 
-            {/* Right icons — desktop only */}
-            <div className="flex items-center gap-0.5 sm:gap-1">
-              {/* Icons only on lg+ */}
+            {/* Right side */}
+            <div className="flex items-center gap-1">
+              {/* Icons — desktop only */}
               <button
                 aria-label="Cari produk"
                 onClick={() => setSearchOpen(true)}
                 className={`hidden lg:flex p-2.5 rounded-full transition-colors group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
               >
-                <Search size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/90 group-hover:text-white'}`} />
+                <Search size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/90'}`} />
               </button>
-
               <button aria-label="Akun saya" className={`hidden lg:flex p-2.5 rounded-full transition-colors group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}>
-                <User size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/90 group-hover:text-white'}`} />
+                <User size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/90'}`} />
+              </button>
+              <button aria-label="Wishlist" className={`hidden lg:flex p-2.5 rounded-full transition-colors relative group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}>
+                <Heart size={18} className={wishlist.length > 0 ? 'fill-[#d4a574] text-[#d4a574]' : `transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/90'}`} />
+                {wishlist.length > 0 && <span className="absolute top-1 right-1 bg-[#d4a574] text-[#0e0b09] text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center leading-none">{wishlist.length}</span>}
+              </button>
+              <button aria-label="Keranjang" className={`hidden lg:flex p-2.5 rounded-full transition-colors relative group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}>
+                <ShoppingBag size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/90'}`} />
+                {cartCount > 0 && <span className="absolute top-1 right-1 bg-[#d4a574] text-[#0e0b09] text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center leading-none">{cartCount}</span>}
               </button>
 
-              <button
-                aria-label="Wishlist"
-                className={`hidden lg:flex p-2.5 rounded-full transition-colors relative group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
-              >
-                <Heart size={18} className={wishlist.length > 0 ? 'fill-[#d4a574] text-[#d4a574]' : `transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/90 group-hover:text-white'}`} />
-                {wishlist.length > 0 && (
-                  <span className="absolute top-1 right-1 bg-[#d4a574] text-[#0e0b09] text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center leading-none">
-                    {wishlist.length}
-                  </span>
-                )}
-              </button>
-
-              <button
-                aria-label="Keranjang"
-                className={`hidden lg:flex p-2.5 rounded-full transition-colors relative group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
-              >
-                <ShoppingBag size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/90 group-hover:text-white'}`} />
-                {cartCount > 0 && (
-                  <span className="absolute top-1 right-1 bg-[#d4a574] text-[#0e0b09] text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center leading-none">
-                    {cartCount}
-                  </span>
-                )}
-              </button>
-
-              {/* Mobile: hamburger only */}
+              {/* Mobile: hamburger only — always dark since mobile bg is white */}
               <button
                 aria-label={mobileMenuOpen ? 'Tutup menu' : 'Buka menu'}
                 onClick={() => setMobileMenuOpen(o => !o)}
-                className={`lg:hidden p-2.5 rounded-full transition-colors ${
-                  navScrolled
-                    ? 'hover:bg-[#f5f0eb]'
-                    : 'bg-white/10 hover:bg-white/20'
-                }`}
+                className="lg:hidden p-2 rounded-xl transition-colors hover:bg-[#f5f0eb] active:scale-95"
               >
                 {mobileMenuOpen
-                  ? <X size={22} className={navScrolled ? 'text-[#2d2420]' : 'text-white'} />
-                  : <Menu size={22} className={navScrolled ? 'text-[#2d2420]' : 'text-white'} />
+                  ? <X size={22} className="text-[#2d2420]" />
+                  : <Menu size={22} className="text-[#2d2420]" />
                 }
               </button>
             </div>
@@ -652,36 +642,35 @@ export default function LandingPage() {
 
         {/* Mobile menu drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden mt-2 animate-slide-down mx-4 sm:mx-8">
+          <div className="lg:hidden mt-2 animate-slide-down mx-4">
             <div
-              className="bg-white/96 backdrop-blur-xl rounded-[18px] border border-[#e0d5cb]/70 px-3 py-4 space-y-1"
-              style={{ boxShadow: '0 8px 40px rgba(45,36,32,0.12)' }}
+              className="bg-white rounded-[20px] border border-[#e0d5cb] px-2 py-3"
+              style={{ boxShadow: '0 16px 48px rgba(45,36,32,0.14)' }}
             >
               {[
-                { label: 'Koleksi Terbaru', href: '#koleksi' },
-                { label: 'Kategori', href: '#kategori' },
-                { label: 'Produk Unggulan', href: '#unggulan' },
-                { label: 'Koleksi Musiman', href: '#musiman' },
-                { label: 'Testimoni', href: '#testimoni' },
-                { label: 'FAQ', href: '#faq' },
-              ].map(({ label, href }) => (
+                { label: 'Koleksi Terbaru', href: '#koleksi', icon: '👗' },
+                { label: 'Produk Unggulan', href: '#unggulan', icon: '⭐' },
+                { label: 'Testimoni', href: '#testimoni', icon: '💬' },
+                { label: 'FAQ', href: '#faq', icon: '❓' },
+              ].map(({ label, href, icon }) => (
                 <a
                   key={label}
                   href={href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between px-3 py-3 text-sm font-medium text-[#2d2420] hover:text-[#8b7355] hover:bg-[#faf8f6] rounded-xl transition-all"
+                  className="flex items-center gap-3 px-3 py-3 text-sm font-semibold text-[#2d2420] hover:text-[#8b7355] hover:bg-[#faf8f6] rounded-xl transition-all active:scale-[0.98]"
                 >
+                  <span className="text-base">{icon}</span>
                   {label}
-                  <ArrowRight size={14} className="text-[#8b7355]" />
+                  <ArrowRight size={14} className="text-[#8b7355] ml-auto" />
                 </a>
               ))}
-              <div className="pt-2 border-t border-[#e0d5cb] mt-1">
+              <div className="px-2 pt-2 mt-1 border-t border-[#e8e3dd]">
                 <button
                   onClick={() => { whatsapp(); setMobileMenuOpen(false) }}
-                  className="w-full flex items-center justify-center gap-2 bg-[#8b7355] text-white py-3 rounded-xl text-sm font-semibold hover:bg-[#7a6448] transition-colors"
+                  className="w-full flex items-center justify-center gap-2 bg-[#2d2420] hover:bg-[#8b7355] text-white py-3.5 rounded-xl text-sm font-bold transition-colors active:scale-[0.98]"
                 >
                   <MessageCircle size={16} />
-                  Hubungi via WhatsApp
+                  Konsultasi via WhatsApp
                 </button>
               </div>
             </div>
@@ -762,7 +751,7 @@ export default function LandingPage() {
 
                 {/* Micro-stats */}
                 <div
-                  className="flex items-center gap-0 mt-12 animate-fade-in-up"
+                  className="flex items-center gap-0 mt-10 animate-fade-in-up"
                   style={{ animationDelay: '380ms' }}
                 >
                   {[
@@ -772,10 +761,10 @@ export default function LandingPage() {
                     { val: '4.9★', lbl: 'Rating' },
                   ].map((b, i) => (
                     <div key={i} className="flex items-center">
-                      {i > 0 && <div className="w-px h-9 bg-white/12 mx-5" />}
+                      {i > 0 && <div className="w-px h-8 bg-white/15 mx-3 sm:mx-5" />}
                       <div>
-                        <p className="text-white font-black leading-none tracking-tight" style={{ fontSize: 'clamp(1rem, 2.2vw, 1.2rem)' }}>{b.val}</p>
-                        <p className="text-white/65 text-[9px] uppercase tracking-[0.2em] mt-1.5">{b.lbl}</p>
+                        <p className="text-white font-black leading-none" style={{ fontSize: 'clamp(0.9rem, 2.2vw, 1.15rem)', letterSpacing: '-0.01em' }}>{b.val}</p>
+                        <p className="text-white/60 text-[8px] uppercase tracking-[0.18em] mt-1">{b.lbl}</p>
                       </div>
                     </div>
                   ))}
@@ -833,7 +822,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-gradient-to-br from-[#2d2420]/60 via-transparent to-transparent pointer-events-none" />
         <div className="noise-overlay opacity-[0.02]" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-white/[0.07]">
+          <div className="grid grid-cols-2 sm:grid-cols-4">
             {[
               { emoji: '✦', label: 'Pelanggan Puas' },
               { emoji: '✦', label: 'Pengalaman' },
@@ -842,7 +831,12 @@ export default function LandingPage() {
             ].map((s, i) => (
               <div
                 key={i}
-                className="text-center px-4 sm:px-8 py-4 group"
+                className={`text-center px-4 sm:px-8 py-6 sm:py-4 group
+                  ${i === 1 ? 'border-l border-white/[0.07]' : ''}
+                  ${i === 3 ? 'border-l border-white/[0.07]' : ''}
+                  ${i < 2 ? 'border-b border-white/[0.07] sm:border-b-0' : ''}
+                  ${i > 0 ? 'sm:border-l sm:border-white/[0.07]' : ''}
+                `}
                 style={{
                   opacity: statsVisible ? 1 : 0,
                   transform: statsVisible ? 'translateY(0)' : 'translateY(32px)',
@@ -1027,11 +1021,11 @@ export default function LandingPage() {
       ══════════════════════════════════ */}
       <section className="py-12 sm:py-16 bg-[#faf8f6] border-y border-[#e0d5cb]/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10">
             {features.map(({ icon: Icon, title, desc }, i) => (
               <div
                 key={title}
-                className={`flex flex-col sm:flex-row items-start gap-4 group reveal delay-${(i * 100) as 0 | 100 | 200 | 300} cursor-default`}
+                className={`flex flex-row items-start gap-4 group reveal delay-${(i * 100) as 0 | 100 | 200 | 300} cursor-default`}
               >
                 <div className="w-12 h-12 rounded-2xl bg-[#2d2420] flex items-center justify-center flex-shrink-0 group-hover:bg-[#8b7355] transition-all duration-400 shadow-premium group-hover:shadow-gold group-hover:-translate-y-1">
                   <Icon size={20} className="text-[#d4a574] group-hover:text-white transition-colors duration-300" />
@@ -1184,8 +1178,8 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Collage */}
-            <div className="reveal-right">
+            {/* Collage — desktop only to avoid duplication with hero */}
+            <div className="hidden lg:block reveal-right">
               <div className="grid grid-cols-2 gap-3 sm:gap-4 h-[340px] sm:h-[440px]">
                 <div className="rounded-3xl overflow-hidden row-span-2 shadow-premium">
                   <LazyImg src="/products/gaun-pengantin-premium.png" alt="Gaun Pengantin" className="w-full h-full" />
