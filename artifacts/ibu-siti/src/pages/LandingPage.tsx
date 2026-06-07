@@ -668,20 +668,19 @@ export default function LandingPage() {
               style={{ boxShadow: '0 16px 48px rgba(45,36,32,0.14)' }}
             >
               {[
-                { label: 'Koleksi Terbaru', href: '#koleksi', icon: '👗' },
-                { label: 'Produk Unggulan', href: '#unggulan', icon: '⭐' },
-                { label: 'Testimoni', href: '#testimoni', icon: '💬' },
-                { label: 'FAQ', href: '#faq', icon: '❓' },
-              ].map(({ label, href, icon }) => (
+                { label: 'Koleksi Terbaru', href: '#koleksi' },
+                { label: 'Produk Unggulan', href: '#unggulan' },
+                { label: 'Testimoni', href: '#testimoni' },
+                { label: 'FAQ', href: '#faq' },
+              ].map(({ label, href }) => (
                 <a
                   key={label}
                   href={href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-3 py-3 text-sm font-semibold text-[#2d2420] hover:text-[#8b7355] hover:bg-[#faf8f6] rounded-xl transition-all active:scale-[0.98]"
+                  className="flex items-center justify-between px-3 py-3.5 text-sm font-semibold text-[#2d2420] hover:text-[#8b7355] hover:bg-[#faf8f6] rounded-xl transition-all active:scale-[0.98]"
                 >
-                  <span className="text-base">{icon}</span>
                   {label}
-                  <ArrowRight size={14} className="text-[#8b7355] ml-auto" />
+                  <ArrowRight size={14} className="text-[#8b7355]" />
                 </a>
               ))}
               <div className="px-2 pt-2 mt-1 border-t border-[#e8e3dd]">
