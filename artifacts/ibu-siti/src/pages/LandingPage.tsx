@@ -190,8 +190,8 @@ function ProductCard({
         {/* Image */}
         <LazyImg src={product.image} alt={product.name} className="w-full h-full group-hover:scale-105 transition-transform duration-700 ease-out" />
 
-        {/* Hover overlay — slides up from bottom */}
-        <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]">
+        {/* Hover overlay — desktop only (hidden on mobile/touch) */}
+        <div className="hidden lg:block absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]">
           <div className="bg-[#1a1210]/95 backdrop-blur-md p-4 flex gap-2.5">
             <button
               onClick={e => { e.stopPropagation(); onView(product) }}
@@ -561,7 +561,7 @@ export default function LandingPage() {
             mx-4 bg-white/96 backdrop-blur-xl rounded-[22px] border border-[#e0d5cb]/70 px-4
             ${navScrolled
               ? 'sm:mx-8 lg:mx-14 xl:mx-auto xl:max-w-[1240px] sm:px-6'
-              : 'sm:mx-4 lg:mx-auto lg:bg-transparent lg:border-transparent lg:rounded-none lg:max-w-7xl lg:px-12 nav-island-shadow'
+              : 'sm:mx-4 lg:mx-auto lg:bg-transparent lg:backdrop-blur-none lg:border-transparent lg:rounded-none lg:max-w-7xl lg:px-12 nav-island-shadow'
             }`}
           style={navScrolled
             ? { boxShadow: '0 8px 40px rgba(45,36,32,0.13), 0 2px 8px rgba(45,36,32,0.06)' }
