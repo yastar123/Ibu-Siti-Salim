@@ -114,42 +114,48 @@ function ProductCard({
   size?: 'sm' | 'md'
 }) {
   return (
-    <article className="group reveal" style={{ '--tw-animation-delay': '0ms' } as React.CSSProperties}>
+    <article className="group reveal">
       {/* Image wrapper */}
       <div
-        className="relative bg-[#f5f0eb] rounded-2xl overflow-hidden cursor-pointer"
-        style={{ aspectRatio: size === 'sm' ? '1/1' : '4/5' }}
+        className="relative bg-[#f0ece6] rounded-3xl overflow-hidden cursor-pointer"
+        style={{ aspectRatio: size === 'sm' ? '1/1' : '3/4' }}
         onClick={() => onView(product)}
       >
+        {/* Badge */}
         {(product.bestseller || product.badge) && (
-          <span className="absolute top-3 left-3 z-10 bg-[#2d2420] text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest">
+          <span className="absolute top-3.5 left-3.5 z-10 bg-[#2d2420] text-white text-[8px] font-black px-3 py-1.5 rounded-full uppercase tracking-[0.18em]">
             {product.badge ?? 'Bestseller'}
           </span>
         )}
+
+        {/* Wishlist button */}
         <button
           aria-label="Tambah ke wishlist"
           onClick={e => { e.stopPropagation(); onWishlist(product.id) }}
-          className={`absolute top-3 right-3 z-10 w-8 h-8 rounded-full flex items-center justify-center shadow-sm transition-all duration-200 hover:scale-110 ${
-            isWishlisted ? 'bg-[#8b7355]' : 'bg-white hover:bg-[#faf8f6]'
+          className={`absolute top-3.5 right-3.5 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-premium hover:scale-110 active:scale-95 ${
+            isWishlisted
+              ? 'bg-[#8b7355] shadow-gold'
+              : 'bg-white/90 backdrop-blur-sm hover:bg-white'
           }`}
         >
           <Heart size={14} className={isWishlisted ? 'fill-white text-white' : 'text-[#2d2420]'} />
         </button>
 
-        <LazyImg src={product.image} alt={product.name} className="w-full h-full" />
+        {/* Image */}
+        <LazyImg src={product.image} alt={product.name} className="w-full h-full group-hover:scale-105 transition-transform duration-700 ease-out" />
 
-        {/* Hover overlay */}
-        <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-350 ease-out">
-          <div className="bg-[#2d2420]/92 backdrop-blur-sm p-3 flex gap-2">
+        {/* Hover overlay — slides up from bottom */}
+        <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]">
+          <div className="bg-[#1a1210]/95 backdrop-blur-md p-4 flex gap-2.5">
             <button
               onClick={e => { e.stopPropagation(); onView(product) }}
-              className="flex-1 text-white text-[11px] font-semibold py-2 rounded-xl border border-white/20 hover:bg-white/10 transition-colors"
+              className="flex-1 text-white/85 hover:text-white text-[11px] font-semibold py-2.5 rounded-2xl border border-white/15 hover:border-white/35 transition-all duration-200"
             >
               Lihat Detail
             </button>
             <button
               onClick={e => { e.stopPropagation(); onOrder(product.name) }}
-              className="flex-1 bg-[#8b7355] hover:bg-[#a88968] text-white text-[11px] font-semibold py-2 rounded-xl transition-colors"
+              className="flex-1 bg-[#d4a574] hover:bg-[#c49562] text-[#1a1210] text-[11px] font-bold py-2.5 rounded-2xl transition-all duration-200"
             >
               Tanyakan
             </button>
@@ -158,22 +164,26 @@ function ProductCard({
       </div>
 
       {/* Info */}
-      <div className="mt-3 space-y-1.5">
+      <div className="mt-4 space-y-2">
+        {/* Color indicator + rating */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <Stars rating={product.rating} size={12} />
+            <span className="text-[10px] text-[#8b7355] font-medium">({product.reviews})</span>
+          </div>
+          <span className="text-[10px] text-[#8b7355]/60 font-medium bg-[#f5f0eb] px-2 py-0.5 rounded-full">{product.color}</span>
+        </div>
         <h3
-          className="font-semibold text-[#2d2420] text-sm leading-snug group-hover:text-[#8b7355] transition-colors cursor-pointer line-clamp-2"
+          className="font-bold text-[#2d2420] text-sm leading-snug group-hover:text-[#8b7355] transition-colors cursor-pointer line-clamp-1"
           onClick={() => onView(product)}
         >
           {product.name}
         </h3>
-        <div className="flex items-center gap-1.5">
-          <Stars rating={product.rating} />
-          <span className="text-[10px] text-[#8b7355]">({product.reviews})</span>
-        </div>
-        <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="font-bold text-[#8b7355] text-sm">{product.price}</span>
-          <span className="text-[10px] text-[#8b7355]/60 font-medium">/hari</span>
+        <div className="flex items-baseline gap-2">
+          <span className="font-black text-[#2d2420] text-base tracking-tight">{product.price}</span>
+          <span className="text-[10px] text-[#8b7355]/70 font-medium">/hari</span>
           {product.originalPrice && (
-            <span className="text-[11px] text-[#8b7355]/45 line-through">{product.originalPrice}</span>
+            <span className="text-xs text-[#8b7355]/40 line-through">{product.originalPrice}</span>
           )}
         </div>
       </div>
@@ -600,86 +610,115 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           HERO
       ══════════════════════════════════ */}
-      <section className="relative overflow-hidden" style={{ height: 'clamp(400px, 65vh, 680px)' }}>
-        {/* Bg image */}
+      <section className="relative overflow-hidden flex flex-col" style={{ minHeight: '100svh' }}>
+        {/* Background image with parallax */}
         <div
-          className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
           style={{
             backgroundImage: `url('/products/seasonal-autumn.png')`,
-            backgroundPosition: 'center 25%',
+            backgroundPosition: 'center 30%',
             transform: `translateY(${heroParallax}px)`,
             willChange: 'transform',
+            scale: '1.08',
           }}
         />
-        {!heroLoaded && <div className="absolute inset-0 shimmer" />}
+        {!heroLoaded && <div className="absolute inset-0 bg-[#1a1210]" />}
 
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#2d2420]/88 via-[#2d2420]/45 to-[#2d2420]/10" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#2d2420]/40 to-transparent" />
-        {/* Grain texture */}
-        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")', backgroundRepeat: 'repeat', backgroundSize: '150px' }} />
+        {/* Layered gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0e0b09]/97 via-[#1a1210]/80 to-[#1a1210]/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0e0b09]/70 via-transparent to-transparent" />
+        <div className="noise-overlay" />
 
-        {/* Content */}
-        <div className="relative z-10 h-full flex items-center">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <div className="max-w-lg">
-              <p className="text-[#d4a574] text-[11px] sm:text-xs font-bold uppercase tracking-[0.25em] mb-3 animate-fade-in-up">
-                ✦ Koleksi Eksklusif 2024
-              </p>
-              <h1
-                className="font-bold text-white leading-[1.05] mb-4 animate-fade-in-up"
-                style={{ fontSize: 'clamp(1.9rem, 5vw, 3.5rem)', animationDelay: '80ms' }}
-              >
-                TAMPIL PERCAYA<br className="hidden sm:block" /> DIRI SETIAP SAAT
-              </h1>
-              <p
-                className="text-white/80 leading-relaxed mb-8 animate-fade-in-up"
-                style={{ fontSize: 'clamp(0.82rem, 1.8vw, 1rem)', animationDelay: '160ms' }}
-              >
-                Sewa gaun pengantin, kebaya tradisional & baju adat berkualitas<br className="hidden sm:block" /> premium untuk hari istimewa Anda.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 animate-fade-in-up" style={{ animationDelay: '240ms' }}>
-                <button
-                  onClick={() => whatsapp()}
-                  className="inline-flex items-center justify-center gap-2 bg-[#8b7355] hover:bg-[#a88968] text-white px-7 py-3.5 rounded-full text-sm font-semibold transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 hover-lift"
+        {/* Decorative floating rings (desktop) */}
+        <div className="absolute right-[5%] top-[10%] w-[460px] h-[460px] rounded-full border border-[#d4a574]/10 animate-spin-slow pointer-events-none hidden xl:block" />
+        <div className="absolute right-[10%] top-[15%] w-[300px] h-[300px] rounded-full border border-[#d4a574]/08 animate-spin-slow-r pointer-events-none hidden xl:block" />
+        <div className="absolute right-[18%] top-[22%] w-[140px] h-[140px] rounded-full border border-[#d4a574]/12 pointer-events-none hidden xl:block" />
+
+        {/* Main content */}
+        <div className="relative z-10 flex-1 flex items-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-24 lg:py-32">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+              {/* ── Left: Text block ── */}
+              <div>
+                <div className="eyebrow text-[#d4a574] mb-6 animate-fade-in-up">
+                  Koleksi Eksklusif 2024
+                </div>
+
+                <h1
+                  className="font-black text-white leading-[1.03] mb-6 animate-fade-in-up"
+                  style={{ fontSize: 'clamp(2.8rem, 7.5vw, 5.8rem)', animationDelay: '80ms', letterSpacing: '-0.02em' }}
                 >
-                  <MessageCircle size={16} />
-                  Hubungi Kami
-                </button>
-                <a
-                  href="#koleksi"
-                  className="inline-flex items-center justify-center gap-2 bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white border border-white/30 hover:border-white/50 px-7 py-3.5 rounded-full text-sm font-semibold transition-all duration-300"
-                >
-                  Lihat Koleksi
-                  <ArrowRight size={15} />
-                </a>
-              </div>
+                  Tampil<br />
+                  <span className="font-serif italic text-gradient-gold">Percaya Diri</span><br />
+                  Setiap Saat
+                </h1>
 
-              {/* Trust badges */}
-              <div className="flex items-center gap-5 mt-7 animate-fade-in-up" style={{ animationDelay: '360ms' }}>
-                {[
-                  { val: '5.000+', lbl: 'Pelanggan Puas' },
-                  { val: '29 Th', lbl: 'Pengalaman' },
-                  { val: '200+', lbl: 'Koleksi' },
-                  { val: '4.9★', lbl: 'Rating' },
-                ].map((b, i) => (
-                  <div key={i} className="flex items-center gap-5">
-                    {i > 0 && <div className="w-px h-8 bg-white/20" />}
-                    <div>
-                      <p className="text-white text-sm font-extrabold leading-none tracking-tight">{b.val}</p>
-                      <p className="text-white/50 text-[9px] uppercase tracking-widest mt-1">{b.lbl}</p>
+                <p
+                  className="text-white/65 leading-[1.75] mb-10 animate-fade-in-up max-w-md"
+                  style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1.05rem)', animationDelay: '180ms' }}
+                >
+                  Sewa gaun pengantin, kebaya tradisional & baju adat berkualitas premium untuk momen istimewa Anda.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-3 animate-fade-in-up" style={{ animationDelay: '260ms' }}>
+                  <button onClick={() => whatsapp()} className="btn-primary">
+                    <MessageCircle size={16} />
+                    Konsultasi Gratis
+                  </button>
+                  <a href="#koleksi" className="btn-outline">
+                    Lihat Koleksi
+                    <ArrowRight size={15} />
+                  </a>
+                </div>
+
+                {/* Micro-stats */}
+                <div
+                  className="flex items-center gap-0 mt-12 animate-fade-in-up"
+                  style={{ animationDelay: '380ms' }}
+                >
+                  {[
+                    { val: '5.000+', lbl: 'Pelanggan' },
+                    { val: '29 Th', lbl: 'Pengalaman' },
+                    { val: '200+', lbl: 'Koleksi' },
+                    { val: '4.9★', lbl: 'Rating' },
+                  ].map((b, i) => (
+                    <div key={i} className="flex items-center">
+                      {i > 0 && <div className="w-px h-9 bg-white/12 mx-5" />}
+                      <div>
+                        <p className="text-white font-black leading-none tracking-tight" style={{ fontSize: 'clamp(1rem, 2.2vw, 1.2rem)' }}>{b.val}</p>
+                        <p className="text-white/40 text-[9px] uppercase tracking-[0.2em] mt-1.5">{b.lbl}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
+
+              {/* ── Right: Product image collage (desktop) ── */}
+              <div
+                className="hidden lg:grid grid-cols-2 gap-4"
+                style={{ height: 'clamp(440px, 55vw, 580px)', animationDelay: '500ms' }}
+              >
+                <div className="rounded-[28px] overflow-hidden row-span-2 shadow-dark ring-1 ring-white/8 animate-fade-in-up" style={{ animationDelay: '350ms' }}>
+                  <LazyImg src="/products/gaun-pengantin-premium.png" alt="Gaun Pengantin Premium" className="w-full h-full hover:scale-105 transition-transform duration-[1200ms]" />
+                </div>
+                <div className="rounded-[28px] overflow-hidden shadow-dark ring-1 ring-white/8 animate-float animate-fade-in-up" style={{ animationDelay: '450ms' }}>
+                  <LazyImg src="/products/kebaya-bludru.png" alt="Kebaya Bludru" className="w-full h-full hover:scale-105 transition-transform duration-[1200ms]" />
+                </div>
+                <div className="rounded-[28px] overflow-hidden shadow-dark ring-1 ring-white/8 animate-float2 animate-fade-in-up" style={{ animationDelay: '550ms' }}>
+                  <LazyImg src="/products/gaun-pink-premium.png" alt="Gaun Pink" className="w-full h-full hover:scale-105 transition-transform duration-[1200ms]" />
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
 
-        {/* Scroll hint */}
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 animate-float">
-          <div className="w-5 h-8 rounded-full border-2 border-white/40 flex items-start justify-center pt-1.5">
-            <div className="w-1 h-1.5 bg-white/70 rounded-full animate-bounce" />
+        {/* Scroll indicator */}
+        <div className="relative z-10 pb-8 flex justify-center pointer-events-none">
+          <div className="flex flex-col items-center gap-2 animate-float opacity-60">
+            <span className="text-white/50 text-[8px] uppercase tracking-[0.35em] font-medium">Scroll</span>
+            <div className="w-px h-10 bg-gradient-to-b from-white/50 to-transparent" />
           </div>
         </div>
       </section>
@@ -687,24 +726,36 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           STATS BAR
       ══════════════════════════════════ */}
-      <div className="bg-gradient-to-r from-[#7a6448] via-[#8b7355] to-[#a08060] py-8 sm:py-10" ref={statsRef}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 text-center">
-            {stats.map((s, i) => (
+      <div className="bg-[#1a1210] py-14 sm:py-20 relative overflow-hidden" ref={statsRef}>
+        {/* Subtle background texture */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#2d2420]/60 via-transparent to-transparent pointer-events-none" />
+        <div className="noise-overlay opacity-[0.02]" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-white/[0.07]">
+            {[
+              { emoji: '✦', label: 'Pelanggan Puas' },
+              { emoji: '✦', label: 'Pengalaman' },
+              { emoji: '✦', label: 'Koleksi Baju' },
+              { emoji: '✦', label: 'Rating Rata-rata' },
+            ].map((s, i) => (
               <div
                 key={i}
-                className="group transition-all duration-700"
+                className="text-center px-4 sm:px-8 py-4 group"
                 style={{
                   opacity: statsVisible ? 1 : 0,
-                  transform: statsVisible ? 'translateY(0) scale(1)' : 'translateY(24px) scale(0.95)',
-                  transitionDelay: `${i * 130}ms`,
+                  transform: statsVisible ? 'translateY(0)' : 'translateY(32px)',
+                  transition: 'opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)',
+                  transitionDelay: `${i * 120}ms`,
                 }}
               >
-                <p className="text-3xl sm:text-4xl font-black text-white tracking-tight tabular-nums" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.15)' }}>
-                  {statsVisible ? statDisplays[i] : s.value}
+                <p
+                  className="font-black tabular-nums leading-none text-gradient-gold"
+                  style={{ fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', letterSpacing: '-0.02em' }}
+                >
+                  {statsVisible ? statDisplays[i] : '—'}
                 </p>
-                <div className="w-8 h-0.5 bg-white/30 mx-auto my-2 group-hover:w-14 transition-all duration-500 rounded-full" />
-                <p className="text-white/70 text-[10px] font-semibold uppercase tracking-[0.2em]">{s.label}</p>
+                <div className="w-6 h-px bg-[#d4a574]/30 mx-auto my-3 group-hover:w-12 transition-all duration-500 rounded-full" />
+                <p className="text-white/40 font-semibold uppercase tracking-[0.22em]" style={{ fontSize: '0.62rem' }}>{s.label}</p>
               </div>
             ))}
           </div>
@@ -714,59 +765,64 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           CARA KERJA (HOW IT WORKS)
       ══════════════════════════════════ */}
-      <section className="py-16 sm:py-20 bg-[#faf8f6]">
+      <section className="py-20 sm:py-28 bg-[#faf8f6] overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 reveal">
-            <p className="text-[#8b7355] text-[10px] font-bold uppercase tracking-[0.2em] mb-2">Mudah & Terpercaya</p>
-            <h2 className="text-fluid-2xl font-bold text-[#2d2420]">Cara Kerja Penyewaan</h2>
-            <p className="text-[#8b7355] text-sm mt-2 max-w-md mx-auto">Proses sewa yang mudah, cepat, dan terpercaya — siap dalam hitungan jam</p>
+          <div className="text-center mb-16 sm:mb-20 reveal">
+            <div className="eyebrow justify-center mb-4">Mudah &amp; Terpercaya</div>
+            <h2
+              className="font-black text-[#2d2420] leading-tight mb-4"
+              style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3rem)', letterSpacing: '-0.02em' }}
+            >
+              Tiga Langkah<br />
+              <span className="font-serif italic text-[#8b7355]">Menuju Sempurna</span>
+            </h2>
+            <p className="text-[#8b7355] max-w-sm mx-auto leading-relaxed" style={{ fontSize: 'clamp(0.85rem, 1.6vw, 0.95rem)' }}>Proses sewa mudah, cepat, dan terpercaya — siap dalam hitungan jam</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:gap-8 relative">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 lg:gap-6 relative">
             {/* Connector line desktop */}
-            <div className="hidden sm:block absolute top-10 left-[calc(16.67%+1rem)] right-[calc(16.67%+1rem)] h-px bg-gradient-to-r from-[#e0d5cb] via-[#8b7355]/40 to-[#e0d5cb]" />
+            <div className="hidden sm:block absolute top-12 left-[calc(16.67%+2rem)] right-[calc(16.67%+2rem)] h-px bg-gradient-to-r from-transparent via-[#8b7355]/25 to-transparent" />
 
             {[
               {
                 step: '01',
                 title: 'Pilih Koleksi',
-                desc: 'Browse koleksi lengkap kami — gaun pengantin, kebaya, atau baju adat. Gunakan filter untuk menemukan yang tepat.',
+                desc: 'Browse lebih dari 200 koleksi — gaun pengantin, kebaya, atau baju adat dari seluruh nusantara.',
                 icon: '👗',
               },
               {
                 step: '02',
-                title: 'Hubungi & Jadwalkan',
-                desc: 'Chat via WhatsApp atau kunjungi showroom untuk fitting gratis. Tentukan tanggal dan durasi sewa Anda.',
+                title: 'Hubungi & Fitting',
+                desc: 'Chat via WhatsApp atau kunjungi showroom untuk fitting gratis. Tentukan tanggal dan durasi sewa.',
                 icon: '📅',
               },
               {
                 step: '03',
                 title: 'Tampil Memukau',
-                desc: 'Kami antar ke lokasi Anda. Nikmati hari istimewa dengan tampilan yang sempurna dan penuh percaya diri.',
+                desc: 'Kami antar ke lokasi. Nikmati hari istimewa dengan tampilan sempurna penuh percaya diri.',
                 icon: '✨',
               },
             ].map((step, i) => (
               <div
                 key={step.step}
-                className="relative bg-white rounded-3xl p-7 border border-[#e0d5cb] hover:border-[#8b7355]/50 hover:shadow-premium-lg transition-all duration-300 text-center group reveal"
+                className="group reveal card-premium p-8 text-center"
                 style={{ transitionDelay: `${i * 120}ms` }}
               >
-                {/* Step number */}
-                <div className="w-14 h-14 rounded-2xl bg-[#8b7355]/8 border border-[#e0d5cb] group-hover:bg-[#8b7355] group-hover:border-[#8b7355] flex items-center justify-center mx-auto mb-5 transition-all duration-300">
-                  <span className="text-2xl group-hover:scale-110 transition-transform duration-300">{step.icon}</span>
+                <div className="relative inline-flex mb-6">
+                  <div className="w-16 h-16 rounded-2xl bg-[#f5f0eb] group-hover:bg-[#2d2420] flex items-center justify-center transition-all duration-400 mx-auto">
+                    <span className="text-2xl group-hover:scale-110 transition-transform duration-300">{step.icon}</span>
+                  </div>
+                  <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#d4a574] text-[#2d2420] text-[10px] font-black flex items-center justify-center leading-none">{i + 1}</span>
                 </div>
-                <span className="text-[10px] font-bold text-[#8b7355] uppercase tracking-[0.2em] block mb-2">{step.step}</span>
-                <h3 className="font-bold text-[#2d2420] text-base mb-2">{step.title}</h3>
-                <p className="text-xs text-[#8b7355] leading-relaxed">{step.desc}</p>
+                <p className="text-[9px] font-bold text-[#d4a574] uppercase tracking-[0.25em] mb-2">{step.step}</p>
+                <h3 className="font-black text-[#2d2420] text-lg mb-3 group-hover:text-[#8b7355] transition-colors" style={{ letterSpacing: '-0.01em' }}>{step.title}</h3>
+                <p className="text-sm text-[#8b7355] leading-relaxed">{step.desc}</p>
               </div>
             ))}
           </div>
 
-          <div className="text-center mt-10 reveal">
-            <button
-              onClick={() => whatsapp()}
-              className="inline-flex items-center gap-2 bg-[#8b7355] hover:bg-[#7a6448] text-white px-7 py-3.5 rounded-full text-sm font-semibold transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
-            >
+          <div className="text-center mt-12 reveal">
+            <button onClick={() => whatsapp()} className="btn-primary">
               <MessageCircle size={16} />
               Mulai Konsultasi Gratis
             </button>
@@ -777,22 +833,28 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           MENGAPA KAMI
       ══════════════════════════════════ */}
-      <section className="py-16 sm:py-20 bg-[#2d2420] overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <section className="py-20 sm:py-28 bg-[#2d2420] overflow-hidden relative">
+        <div className="noise-overlay opacity-[0.025]" />
+        {/* Decorative accent */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-[#8b7355]/5 blur-3xl pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-20 items-center">
             {/* Left copy */}
             <div className="reveal-left">
-              <p className="text-[#d4a574] text-[10px] font-bold uppercase tracking-[0.2em] mb-3">Keunggulan Kami</p>
-              <h2 className="text-fluid-2xl font-bold text-white leading-tight mb-4">
-                Mengapa Ribuan Pengantin<br className="hidden sm:block" /> Memilih Ibu Siti?
-              </h2>
-              <p className="text-white/55 text-sm leading-relaxed mb-8 max-w-md">
-                Selama 29 tahun, kami telah mendampingi ribuan pasangan merayakan momen terindah dalam hidup mereka — dengan koleksi premium, pelayanan tulus, dan harga yang terjangkau.
-              </p>
-              <button
-                onClick={() => whatsapp()}
-                className="inline-flex items-center gap-2 bg-[#d4a574] hover:bg-[#c49562] text-[#2d2420] font-bold text-sm px-7 py-3.5 rounded-full transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+              <div className="eyebrow text-[#d4a574] mb-6">Keunggulan Kami</div>
+              <h2
+                className="font-black text-white leading-tight mb-6"
+                style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3rem)', letterSpacing: '-0.02em' }}
               >
+                Mengapa Ribuan<br />
+                Pengantin Memilih<br />
+                <span className="font-serif italic text-[#d4a574]">Ibu Siti?</span>
+              </h2>
+              <p className="text-white/50 leading-[1.8] mb-10 max-w-md" style={{ fontSize: 'clamp(0.85rem, 1.6vw, 0.95rem)' }}>
+                Selama 29 tahun, kami telah mendampingi ribuan pasangan merayakan momen terindah — dengan koleksi premium, pelayanan tulus, dan harga terjangkau.
+              </p>
+              <button onClick={() => whatsapp()} className="btn-gold">
                 <MessageCircle size={16} />
                 Konsultasi Gratis
               </button>
@@ -801,35 +863,19 @@ export default function LandingPage() {
             {/* Right USP grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 reveal-right">
               {[
-                {
-                  icon: '🏆',
-                  title: '29 Tahun Pengalaman',
-                  desc: 'Berdiri sejak 1995, kami adalah pilihan terpercaya keluarga Jakarta dan sekitarnya.',
-                },
-                {
-                  icon: '👗',
-                  title: '200+ Koleksi Eksklusif',
-                  desc: 'Gaun pengantin, kebaya, baju adat dari berbagai daerah — semuanya tersedia.',
-                },
-                {
-                  icon: '📦',
-                  title: 'Antar & Jemput Gratis',
-                  desc: 'Layanan pengiriman gratis ke seluruh Jabodetabek. Tidak perlu repot.',
-                },
-                {
-                  icon: '✂️',
-                  title: 'Fitting & Alterasi',
-                  desc: 'Tim tailor profesional kami memastikan setiap pakaian muat sempurna di badan Anda.',
-                },
+                { icon: '🏆', title: '29 Tahun Pengalaman', desc: 'Berdiri sejak 1995, pilihan terpercaya keluarga Jakarta dan sekitarnya.' },
+                { icon: '👗', title: '200+ Koleksi Eksklusif', desc: 'Gaun pengantin, kebaya, baju adat dari berbagai daerah nusantara.' },
+                { icon: '📦', title: 'Antar & Jemput Gratis', desc: 'Layanan pengiriman gratis ke seluruh Jabodetabek.' },
+                { icon: '✂️', title: 'Fitting & Alterasi', desc: 'Tim tailor profesional memastikan setiap pakaian muat sempurna.' },
               ].map((usp, i) => (
                 <div
                   key={usp.title}
-                  className="bg-white/6 hover:bg-white/10 border border-white/10 hover:border-[#d4a574]/40 rounded-2xl p-5 transition-all duration-300 group reveal"
-                  style={{ transitionDelay: `${i * 120}ms` }}
+                  className="group bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-[#d4a574]/30 rounded-3xl p-6 transition-all duration-400 reveal cursor-default"
+                  style={{ transitionDelay: `${i * 100}ms` }}
                 >
-                  <span className="text-2xl block mb-3 group-hover:scale-110 transition-transform duration-300 origin-left">{usp.icon}</span>
-                  <h3 className="font-bold text-white text-sm mb-1.5 group-hover:text-[#d4a574] transition-colors duration-300">{usp.title}</h3>
-                  <p className="text-white/45 text-xs leading-relaxed group-hover:text-white/60 transition-colors duration-300">{usp.desc}</p>
+                  <span className="text-3xl block mb-4 group-hover:scale-110 transition-transform duration-300 origin-left">{usp.icon}</span>
+                  <h3 className="font-black text-white text-sm mb-2 group-hover:text-[#d4a574] transition-colors" style={{ letterSpacing: '-0.01em' }}>{usp.title}</h3>
+                  <p className="text-white/40 text-xs leading-relaxed group-hover:text-white/55 transition-colors">{usp.desc}</p>
                 </div>
               ))}
             </div>
@@ -840,14 +886,22 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           LATEST PRODUCTS
       ══════════════════════════════════ */}
-      <section id="koleksi" className="py-16 sm:py-24 bg-white">
+      <section id="koleksi" className="py-20 sm:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-10 sm:mb-14">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-14 sm:mb-18">
             <div className="reveal">
-              <p className="text-[#8b7355] text-[10px] font-bold uppercase tracking-[0.2em] mb-1.5">Terbaru</p>
-              <h2 className="text-fluid-2xl font-bold text-[#2d2420]">Produk Terbaru</h2>
-              <p className="text-[#8b7355] text-sm mt-1 max-w-xs">Koleksi terkini pilihan para pengantin dan pecinta fashion</p>
+              <div className="eyebrow mb-4">Koleksi Terbaru</div>
+              <h2
+                className="font-black text-[#2d2420] leading-tight"
+                style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3rem)', letterSpacing: '-0.02em' }}
+              >
+                Produk<br />
+                <span className="font-serif italic text-[#8b7355]">Terbaru</span>
+              </h2>
             </div>
+            <p className="text-[#8b7355] text-sm max-w-xs leading-relaxed reveal sm:text-right">
+              Koleksi terkini pilihan para pengantin dan pecinta fashion nusantara
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -869,20 +923,20 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           FEATURE BADGES
       ══════════════════════════════════ */}
-      <section className="py-10 sm:py-14 bg-[#faf8f6] border-y border-[#e0d5cb]">
+      <section className="py-12 sm:py-16 bg-[#faf8f6] border-y border-[#e0d5cb]/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10">
             {features.map(({ icon: Icon, title, desc }, i) => (
               <div
                 key={title}
-                className={`flex items-start gap-3 group reveal delay-${(i * 100) as 0 | 100 | 200 | 300}`}
+                className={`flex flex-col sm:flex-row items-start gap-4 group reveal delay-${(i * 100) as 0 | 100 | 200 | 300} cursor-default`}
               >
-                <div className="w-11 h-11 rounded-2xl bg-[#8b7355]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#8b7355] transition-all duration-300 group-hover:shadow-lg">
-                  <Icon size={19} className="text-[#8b7355] group-hover:text-white transition-colors duration-300" />
+                <div className="w-12 h-12 rounded-2xl bg-[#2d2420] flex items-center justify-center flex-shrink-0 group-hover:bg-[#8b7355] transition-all duration-400 shadow-premium group-hover:shadow-gold group-hover:-translate-y-1">
+                  <Icon size={20} className="text-[#d4a574] group-hover:text-white transition-colors duration-300" />
                 </div>
                 <div className="min-w-0">
-                  <p className="font-bold text-[#2d2420] text-sm">{title}</p>
-                  <p className="text-[11px] text-[#8b7355] mt-0.5 leading-relaxed">{desc}</p>
+                  <p className="font-black text-[#2d2420] text-sm mb-1" style={{ letterSpacing: '-0.01em' }}>{title}</p>
+                  <p className="text-[11px] text-[#8b7355] leading-relaxed">{desc}</p>
                 </div>
               </div>
             ))}
@@ -893,57 +947,69 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           CATEGORIES
       ══════════════════════════════════ */}
-      <section id="kategori" className="py-16 sm:py-24 bg-white">
+      <section id="kategori" className="py-20 sm:py-28 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-10 sm:mb-14 reveal">
-            <p className="text-[#8b7355] text-[10px] font-bold uppercase tracking-[0.2em] mb-1.5">Jelajahi</p>
-            <h2 className="text-fluid-2xl font-bold text-[#2d2420]">Kategori Koleksi</h2>
-            <p className="text-[#8b7355] text-sm mt-1">Temukan baju yang sesuai dengan kebutuhan dan gaya Anda</p>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-14 sm:mb-18">
+            <div className="reveal">
+              <div className="eyebrow mb-4">Jelajahi Koleksi</div>
+              <h2
+                className="font-black text-[#2d2420] leading-tight"
+                style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3rem)', letterSpacing: '-0.02em' }}
+              >
+                Kategori<br />
+                <span className="font-serif italic text-[#8b7355]">Pilihan</span>
+              </h2>
+            </div>
+            <p className="text-[#8b7355] text-sm max-w-xs leading-relaxed reveal sm:text-right">
+              Temukan busana yang sesuai kebutuhan dan gaya Anda — dari gaun modern hingga baju adat
+            </p>
           </div>
 
-          {/* Desktop: asymmetric grid */}
-          <div className="hidden sm:grid grid-cols-3 gap-4 lg:gap-5" style={{ height: 'clamp(380px, 45vw, 520px)' }}>
-            {/* Tall card */}
-            <a href="#koleksi" className="row-span-2 relative rounded-3xl overflow-hidden group cursor-pointer reveal-left block">
-              <LazyImg src={categories[0].image} alt={categories[0].name} className="w-full h-full group-hover:scale-105 transition-transform duration-700" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#2d2420]/85 via-[#2d2420]/20 to-transparent group-hover:from-[#2d2420]/90 transition-all duration-300" />
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <p className="text-white/60 text-[10px] font-semibold uppercase tracking-widest mb-1">{categories[0].count}</p>
-                <h3 className="text-white font-bold text-xl mb-0.5 group-hover:translate-y-[-2px] transition-transform duration-300">{categories[0].name}</h3>
-                <p className="text-white/70 text-xs">{categories[0].desc}</p>
-                <span className="inline-flex items-center gap-1 mt-3 text-[#d4a574] text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  Lihat Koleksi <ArrowRight size={10} />
+          {/* Desktop: asymmetric editorial grid */}
+          <div className="hidden sm:grid grid-cols-3 gap-4 lg:gap-5" style={{ height: 'clamp(420px, 48vw, 560px)' }}>
+            <a href="#koleksi" className="row-span-2 relative rounded-[28px] overflow-hidden group cursor-pointer reveal-left block">
+              <LazyImg src={categories[0].image} alt={categories[0].name} className="w-full h-full group-hover:scale-106 transition-transform duration-700 ease-out" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0e0b09]/90 via-[#1a1210]/30 to-transparent transition-all duration-400" />
+              {/* Category number */}
+              <span className="absolute top-5 left-5 text-white/15 font-black" style={{ fontSize: '4rem', lineHeight: 1, letterSpacing: '-0.04em', fontFamily: 'Playfair Display, serif', fontStyle: 'italic' }}>01</span>
+              <div className="absolute bottom-0 left-0 right-0 p-7 translate-y-2 group-hover:translate-y-0 transition-transform duration-400">
+                <p className="text-white/50 text-[9px] font-bold uppercase tracking-[0.28em] mb-2">{categories[0].count}</p>
+                <h3 className="text-white font-black text-2xl mb-1" style={{ letterSpacing: '-0.02em' }}>{categories[0].name}</h3>
+                <p className="text-white/60 text-xs leading-relaxed mb-4 max-w-[200px]">{categories[0].desc}</p>
+                <span className="inline-flex items-center gap-2 text-[#d4a574] text-[10px] font-black uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-opacity duration-400">
+                  Lihat Koleksi <ArrowRight size={11} />
                 </span>
               </div>
             </a>
-            {/* Two shorter cards */}
             {categories.slice(1).map((cat, i) => (
-              <a href="#koleksi" key={cat.id} className={`relative rounded-3xl overflow-hidden group cursor-pointer block ${i === 0 ? 'reveal' : 'reveal-right'}`}>
-                <LazyImg src={cat.image} alt={cat.name} className="w-full h-full group-hover:scale-105 transition-transform duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#2d2420]/85 via-[#2d2420]/10 to-transparent group-hover:from-[#2d2420]/90 transition-all duration-300" />
-                <div className="absolute bottom-0 left-0 right-0 p-5">
-                  <p className="text-white/60 text-[10px] font-semibold uppercase tracking-widest mb-1">{cat.count}</p>
-                  <h3 className="text-white font-bold text-lg group-hover:translate-y-[-2px] transition-transform duration-300">{cat.name}</h3>
-                  <p className="text-white/70 text-xs mt-0.5">{cat.desc}</p>
-                  <span className="inline-flex items-center gap-1 mt-2 text-[#d4a574] text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    Lihat Koleksi <ArrowRight size={10} />
+              <a href="#koleksi" key={cat.id} className={`relative rounded-[28px] overflow-hidden group cursor-pointer block ${i === 0 ? 'reveal delay-100' : 'reveal-right delay-200'}`}>
+                <LazyImg src={cat.image} alt={cat.name} className="w-full h-full group-hover:scale-106 transition-transform duration-700 ease-out" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0b09]/88 via-[#1a1210]/25 to-transparent" />
+                <span className="absolute top-4 left-5 text-white/12 font-black" style={{ fontSize: '3rem', lineHeight: 1, letterSpacing: '-0.04em', fontFamily: 'Playfair Display, serif', fontStyle: 'italic' }}>0{i + 2}</span>
+                <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-1 group-hover:translate-y-0 transition-transform duration-400">
+                  <p className="text-white/50 text-[9px] font-bold uppercase tracking-[0.28em] mb-1.5">{cat.count}</p>
+                  <h3 className="text-white font-black text-xl mb-1" style={{ letterSpacing: '-0.02em' }}>{cat.name}</h3>
+                  <p className="text-white/55 text-xs mb-3">{cat.desc}</p>
+                  <span className="inline-flex items-center gap-1.5 text-[#d4a574] text-[10px] font-black uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-opacity duration-400">
+                    Lihat <ArrowRight size={10} />
                   </span>
                 </div>
               </a>
             ))}
           </div>
 
-          {/* Mobile: vertical stack */}
-          <div className="sm:hidden grid grid-cols-1 gap-4">
-            {categories.map(cat => (
-              <a href="#koleksi" key={cat.id} className="relative h-48 rounded-2xl overflow-hidden group cursor-pointer reveal block">
+          {/* Mobile: vertical cards */}
+          <div className="sm:hidden space-y-4">
+            {categories.map((cat, i) => (
+              <a href="#koleksi" key={cat.id} className="relative h-52 rounded-[24px] overflow-hidden group cursor-pointer reveal block">
                 <LazyImg src={cat.image} alt={cat.name} className="w-full h-full group-hover:scale-105 transition-transform duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#2d2420]/75 to-[#2d2420]/20" />
-                <div className="absolute inset-0 flex items-end p-5">
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0e0b09]/88 via-[#1a1210]/50 to-transparent" />
+                <span className="absolute top-3 right-4 text-white/10 font-black" style={{ fontSize: '3.5rem', lineHeight: 1, fontFamily: 'Playfair Display, serif', fontStyle: 'italic' }}>0{i + 1}</span>
+                <div className="absolute inset-0 flex items-end p-6">
                   <div>
-                    <p className="text-white/60 text-[10px] uppercase tracking-wider mb-0.5">{cat.count}</p>
-                    <h3 className="text-white font-bold text-lg">{cat.name}</h3>
-                    <p className="text-white/70 text-xs">{cat.desc}</p>
+                    <p className="text-white/50 text-[9px] uppercase tracking-[0.22em] font-semibold mb-1.5">{cat.count}</p>
+                    <h3 className="text-white font-black text-xl mb-1" style={{ letterSpacing: '-0.02em' }}>{cat.name}</h3>
+                    <p className="text-white/60 text-xs">{cat.desc}</p>
                   </div>
                 </div>
               </a>
@@ -961,9 +1027,14 @@ export default function LandingPage() {
             {/* Text */}
             <div className="space-y-6 reveal-left">
               <div>
-                <p className="text-[#8b7355] text-[10px] font-bold uppercase tracking-[0.2em] mb-2">Penawaran Spesial</p>
-                <h2 className="text-fluid-2xl font-bold text-[#2d2420] leading-snug">
-                  Penawaran Eksklusif<br />untuk Waktu Terbatas
+                <div className="eyebrow mb-4">Penawaran Spesial</div>
+                <h2
+                  className="font-black text-[#2d2420] leading-tight"
+                  style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', letterSpacing: '-0.02em' }}
+                >
+                  Penawaran<br />
+                  <span className="font-serif italic text-[#8b7355]">Eksklusif</span><br />
+                  Waktu Terbatas
                 </h2>
               </div>
               <p className="text-[#8b7355] text-sm leading-relaxed">
@@ -1045,19 +1116,25 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           FEATURED PRODUCTS
       ══════════════════════════════════ */}
-      <section id="unggulan" className="py-16 sm:py-24 bg-white">
+      <section id="unggulan" className="py-20 sm:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-10 sm:mb-14">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-14">
             <div className="reveal">
-              <p className="text-[#8b7355] text-[10px] font-bold uppercase tracking-[0.2em] mb-1.5">Pilihan Terbaik</p>
-              <h2 className="text-fluid-2xl font-bold text-[#2d2420]">Produk Unggulan</h2>
+              <div className="eyebrow mb-4">Pilihan Terbaik</div>
+              <h2
+                className="font-black text-[#2d2420] leading-tight"
+                style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3rem)', letterSpacing: '-0.02em' }}
+              >
+                Produk<br />
+                <span className="font-serif italic text-[#8b7355]">Unggulan</span>
+              </h2>
             </div>
             <button
               onClick={() => whatsapp()}
-              className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-[#8b7355] hover:text-[#2d2420] transition-colors group reveal"
+              className="hidden sm:inline-flex items-center gap-2 text-sm font-bold text-[#2d2420] hover:text-[#8b7355] transition-colors group reveal border-b border-[#2d2420]/30 hover:border-[#8b7355] pb-0.5 self-end mb-1"
             >
               Lihat Semua
-              <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform duration-200" />
             </button>
           </div>
 
@@ -1081,38 +1158,47 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           SEASONAL COLLECTION
       ══════════════════════════════════ */}
-      <section id="musiman" className="py-16 sm:py-24 bg-[#faf8f6]">
+      <section id="musiman" className="py-20 sm:py-28 bg-[#faf8f6]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-10 sm:mb-14 reveal">
-            <p className="text-[#8b7355] text-[10px] font-bold uppercase tracking-[0.2em] mb-1.5">Tren Musim Ini</p>
-            <h2 className="text-fluid-2xl font-bold text-[#2d2420]">Koleksi Musiman</h2>
-            <p className="text-[#8b7355] text-sm mt-1">Temukan inspirasi gaya terkini dari koleksi musiman kami</p>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-14">
+            <div className="reveal">
+              <div className="eyebrow mb-4">Tren Musim Ini</div>
+              <h2
+                className="font-black text-[#2d2420] leading-tight"
+                style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3rem)', letterSpacing: '-0.02em' }}
+              >
+                Koleksi<br />
+                <span className="font-serif italic text-[#8b7355]">Musiman</span>
+              </h2>
+            </div>
+            <p className="text-[#8b7355] text-sm max-w-xs leading-relaxed reveal sm:text-right">
+              Inspirasi gaya terkini mengikuti ritme musim — segar, elegan, dan selalu relevan
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
             {[
               { title: 'Koleksi Musim Semi', sub: 'Segar, Ringan & Feminin', image: '/products/seasonal-spring.png', items: 12 },
               { title: 'Koleksi Autumn', sub: 'Hangat, Elegan & Berkelas', image: '/products/seasonal-autumn.png', items: 9 },
             ].map((col, i) => (
               <div
                 key={col.title}
-                className={`relative rounded-3xl overflow-hidden group cursor-pointer ${i === 0 ? 'reveal-left' : 'reveal-right'}`}
-                style={{ height: 'clamp(240px, 35vw, 420px)' }}
+                className={`relative rounded-[28px] overflow-hidden group cursor-pointer ${i === 0 ? 'reveal-left' : 'reveal-right'}`}
+                style={{ height: 'clamp(260px, 38vw, 460px)' }}
               >
-                <LazyImg src={col.image} alt={col.title} className="w-full h-full group-hover:scale-105 transition-transform duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#2d2420]/80 via-[#2d2420]/20 to-transparent" />
-                <div className="absolute inset-0 flex items-end justify-between p-6 sm:p-8">
-                  <div>
-                    <p className="text-white/60 text-[10px] uppercase tracking-widest mb-1">{col.items} Koleksi</p>
-                    <p className="text-white/70 text-xs mb-1">{col.sub}</p>
-                    <h3 className="text-white font-bold text-xl sm:text-2xl">{col.title}</h3>
+                <LazyImg src={col.image} alt={col.title} className="w-full h-full group-hover:scale-105 transition-transform duration-700 ease-out" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0b09]/85 via-[#1a1210]/30 to-transparent" />
+                <div className="absolute inset-0 flex items-end p-7 sm:p-9">
+                  <div className="flex-1">
+                    <p className="text-white/45 text-[9px] uppercase tracking-[0.28em] font-bold mb-2">{col.items} Koleksi · {col.sub}</p>
+                    <h3 className="text-white font-black mb-5 group-hover:translate-y-[-2px] transition-transform duration-400" style={{ fontSize: 'clamp(1.2rem, 3vw, 2rem)', letterSpacing: '-0.02em' }}>{col.title}</h3>
+                    <button
+                      onClick={() => whatsapp(col.title)}
+                      className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-[#d4a574] hover:text-[#0e0b09] text-white text-[11px] font-black px-5 py-2.5 rounded-full border border-white/20 hover:border-transparent transition-all duration-300"
+                    >
+                      Explore Koleksi <ArrowRight size={12} />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => whatsapp(col.title)}
-                    className="bg-white/15 backdrop-blur-sm text-white text-xs font-semibold px-4 py-2.5 rounded-full border border-white/30 hover:bg-white hover:text-[#2d2420] transition-all duration-300 flex-shrink-0 ml-3"
-                  >
-                    Explore →
-                  </button>
                 </div>
               </div>
             ))}
@@ -1123,31 +1209,52 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           TESTIMONIALS
       ══════════════════════════════════ */}
-      <section id="testimoni" className="py-16 sm:py-24 bg-white">
+      <section id="testimoni" className="py-20 sm:py-28 bg-[#faf8f6] overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16 reveal">
-            <p className="text-[#8b7355] text-[10px] font-bold uppercase tracking-[0.2em] mb-2">Cerita Mereka</p>
-            <h2 className="text-fluid-2xl font-bold text-[#2d2420] mb-2">Fashion Berbicara Sendiri</h2>
-            <p className="text-[#8b7355] text-sm max-w-md mx-auto">Lebih dari 5.000 pelanggan puas telah membuktikan kualitas layanan kami</p>
+          <div className="text-center mb-16 sm:mb-20 reveal">
+            <div className="eyebrow justify-center mb-4">Cerita Pelanggan</div>
+            <h2
+              className="font-black text-[#2d2420] leading-tight mb-4"
+              style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3rem)', letterSpacing: '-0.02em' }}
+            >
+              Mereka Telah<br />
+              <span className="font-serif italic text-[#8b7355]">Membuktikannya</span>
+            </h2>
+            <p className="text-[#8b7355] text-sm max-w-sm mx-auto leading-relaxed">
+              Lebih dari 5.000 pelanggan puas telah mempercayakan hari istimewa mereka kepada kami
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
             {testimonials.map((t, i) => (
               <article
                 key={i}
-                className={`bg-[#faf8f6] rounded-3xl p-6 sm:p-7 border border-[#e0d5cb] hover:border-[#8b7355]/40 hover:shadow-premium-lg transition-all duration-300 reveal delay-${(i * 100) as 0 | 100 | 200}`}
+                className={`relative bg-white rounded-[28px] p-7 sm:p-8 border border-[#e0d5cb] hover:border-[#8b7355]/30 hover:shadow-premium-lg transition-all duration-400 group reveal delay-${(i * 100) as 0 | 100 | 200} overflow-hidden cursor-default`}
               >
-                <Stars rating={t.rating} size={15} />
-                <blockquote className="text-[#2d2420] text-sm leading-relaxed my-4 italic">
-                  "{t.feedback}"
-                </blockquote>
-                <div className="flex items-center gap-3 border-t border-[#e0d5cb] pt-4">
-                  <div className="w-10 h-10 rounded-full bg-[#8b7355]/10 flex items-center justify-center text-xl flex-shrink-0">
-                    {t.avatar}
+                {/* Decorative large quote mark */}
+                <div
+                  className="absolute -top-3 -left-1 text-[#e0d5cb] group-hover:text-[#d4a574]/20 transition-colors duration-400 select-none pointer-events-none"
+                  style={{ fontSize: '9rem', lineHeight: 1, fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontWeight: 800 }}
+                  aria-hidden="true"
+                >
+                  "
+                </div>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-1.5 mb-5">
+                    <Stars rating={t.rating} size={14} />
+                    <span className="text-[9px] font-bold text-[#d4a574] bg-[#d4a574]/10 px-2 py-0.5 rounded-full ml-1">Terverifikasi</span>
                   </div>
-                  <div>
-                    <p className="font-bold text-[#2d2420] text-sm">{t.name}</p>
-                    <p className="text-[11px] text-[#8b7355]">{t.role}</p>
+                  <blockquote className="text-[#2d2420] text-sm leading-[1.8] mb-6 font-medium">
+                    {t.feedback}
+                  </blockquote>
+                  <div className="flex items-center gap-3 border-t border-[#e0d5cb] pt-5">
+                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#8b7355]/20 to-[#d4a574]/20 flex items-center justify-center text-xl flex-shrink-0 ring-2 ring-[#e0d5cb] group-hover:ring-[#8b7355]/30 transition-all duration-400">
+                      {t.avatar}
+                    </div>
+                    <div>
+                      <p className="font-black text-[#2d2420] text-sm" style={{ letterSpacing: '-0.01em' }}>{t.name}</p>
+                      <p className="text-[10px] text-[#8b7355] font-medium mt-0.5">{t.role}</p>
+                    </div>
                   </div>
                 </div>
               </article>
@@ -1159,34 +1266,50 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           FAQ
       ══════════════════════════════════ */}
-      <section id="faq" className="py-16 sm:py-24 bg-[#faf8f6]">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 reveal">
-            <p className="text-[#8b7355] text-[10px] font-bold uppercase tracking-[0.2em] mb-2">Pertanyaan Umum</p>
-            <h2 className="text-fluid-2xl font-bold text-[#2d2420]">FAQ</h2>
+      <section id="faq" className="py-20 sm:py-28 bg-white">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14 reveal">
+            <div className="eyebrow justify-center mb-4">Pertanyaan Umum</div>
+            <h2
+              className="font-black text-[#2d2420] leading-tight"
+              style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3rem)', letterSpacing: '-0.02em' }}
+            >
+              Ada yang ingin<br />
+              <span className="font-serif italic text-[#8b7355]">ditanyakan?</span>
+            </h2>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             {faqs.map((faq, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-[#e0d5cb] overflow-hidden reveal">
+              <div key={i} className="border-b border-[#e8e3dd] last:border-b-0 reveal">
                 <button
-                  className="w-full flex items-center justify-between px-6 py-4 text-left gap-3 hover:bg-[#faf8f6] transition-colors"
+                  className="w-full flex items-center justify-between py-5 text-left gap-4 group"
                   onClick={() => setFaqOpen(faqOpen === i ? null : i)}
                   aria-expanded={faqOpen === i}
                 >
-                  <span className="font-semibold text-[#2d2420] text-sm">{faq.q}</span>
-                  <ChevronDown
-                    size={18}
-                    className={`text-[#8b7355] flex-shrink-0 transition-transform duration-300 ${faqOpen === i ? 'rotate-180' : ''}`}
-                  />
+                  <span className={`font-black text-sm leading-snug transition-colors duration-200 ${faqOpen === i ? 'text-[#8b7355]' : 'text-[#2d2420] group-hover:text-[#8b7355]'}`} style={{ letterSpacing: '-0.01em' }}>{faq.q}</span>
+                  <div className={`w-8 h-8 rounded-full border flex items-center justify-center flex-shrink-0 transition-all duration-300 ${faqOpen === i ? 'bg-[#2d2420] border-[#2d2420]' : 'border-[#e0d5cb] group-hover:border-[#8b7355]'}`}>
+                    <ChevronDown
+                      size={15}
+                      className={`transition-all duration-300 ${faqOpen === i ? 'rotate-180 text-white' : 'text-[#8b7355]'}`}
+                    />
+                  </div>
                 </button>
                 {faqOpen === i && (
-                  <div className="px-6 pb-5 animate-slide-down">
-                    <p className="text-sm text-[#8b7355] leading-relaxed">{faq.a}</p>
+                  <div className="pb-5 animate-slide-down">
+                    <p className="text-sm text-[#8b7355] leading-[1.85]">{faq.a}</p>
                   </div>
                 )}
               </div>
             ))}
+          </div>
+
+          <div className="text-center mt-12 reveal">
+            <p className="text-sm text-[#8b7355] mb-5">Masih ada pertanyaan lain?</p>
+            <button onClick={() => whatsapp()} className="btn-primary">
+              <MessageCircle size={16} />
+              Tanya via WhatsApp
+            </button>
           </div>
         </div>
       </section>
@@ -1194,34 +1317,40 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           CTA BANNER
       ══════════════════════════════════ */}
-      <section className="py-16 sm:py-24 bg-[#2d2420] relative overflow-hidden">
-        {/* Decorative circles */}
-        <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full border-[48px] border-white/5 pointer-events-none" />
-        <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full border-[48px] border-white/5 pointer-events-none" />
-        <div className="absolute top-1/2 right-1/4 w-40 h-40 rounded-full border-[24px] border-[#8b7355]/20 pointer-events-none" />
+      <section className="py-24 sm:py-36 bg-[#0e0b09] relative overflow-hidden">
+        <div className="noise-overlay opacity-[0.03]" />
+        {/* Decorative glowing rings */}
+        <div className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full border border-[#d4a574]/8 pointer-events-none animate-spin-slow" />
+        <div className="absolute -top-20 -right-20 w-[500px] h-[500px] rounded-full border border-[#8b7355]/10 pointer-events-none animate-spin-slow-r" />
+        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-[#8b7355]/5 blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-[#2d2420]/40 blur-3xl pointer-events-none" />
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <p className="text-[#d4a574] text-[10px] font-bold uppercase tracking-[0.25em] mb-3 reveal">Konsultasi Gratis</p>
+          <div className="eyebrow justify-center text-[#d4a574] mb-8 reveal">Konsultasi Gratis</div>
           <h2
-            className="font-bold text-white mb-4 reveal"
-            style={{ fontSize: 'clamp(1.8rem, 5vw, 3.5rem)' }}
+            className="font-black text-white leading-tight mb-6 reveal"
+            style={{ fontSize: 'clamp(2.2rem, 6vw, 4.5rem)', letterSpacing: '-0.03em' }}
           >
-            Siap Tampil Memukau<br />di Hari Istimewa Anda?
+            Siap Tampil<br />
+            <span className="font-serif italic text-gradient-gold">Memukau</span><br />
+            di Hari Istimewa?
           </h2>
-          <p className="text-white/60 text-sm leading-relaxed mb-8 max-w-lg mx-auto reveal">
-            Hubungi kami sekarang untuk konsultasi gratis. Tim ahli kami siap membantu Anda menemukan koleksi impian.
+          <p className="text-white/45 leading-[1.8] mb-12 max-w-md mx-auto reveal" style={{ fontSize: 'clamp(0.85rem, 1.6vw, 0.95rem)' }}>
+            Hubungi kami untuk konsultasi gratis. Tim ahli kami siap membantu menemukan koleksi impian Anda.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center reveal">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center reveal">
             <button
               onClick={() => whatsapp()}
-              className="inline-flex items-center justify-center gap-2.5 bg-[#8b7355] hover:bg-[#a88968] text-white px-8 py-4 rounded-full font-semibold text-sm transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 animate-pulse-ring"
+              className="inline-flex items-center justify-center gap-2.5 bg-[#d4a574] hover:bg-[#c49562] text-[#0e0b09] font-black text-sm px-10 py-4.5 rounded-full transition-all duration-300 hover:-translate-y-1 hover:shadow-gold animate-pulse-ring"
+              style={{ paddingTop: '1.125rem', paddingBottom: '1.125rem' }}
             >
               <MessageCircle size={18} />
               Chat WhatsApp Sekarang
             </button>
             <a
               href="tel:+62812345678"
-              className="inline-flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-8 py-4 rounded-full font-semibold text-sm transition-all duration-300"
+              className="inline-flex items-center justify-center gap-2.5 bg-white/5 hover:bg-white/10 border border-white/12 hover:border-white/25 text-white font-semibold text-sm px-10 rounded-full transition-all duration-300"
+              style={{ paddingTop: '1.125rem', paddingBottom: '1.125rem' }}
             >
               <Phone size={16} />
               Telepon Kami
@@ -1233,29 +1362,45 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           FOOTER
       ══════════════════════════════════ */}
-      <footer className="bg-[#1a1210] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 sm:pt-16 pb-10">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 pb-10 border-b border-white/10">
-            {/* Brand */}
-            <div className="col-span-2 sm:col-span-1">
-              <p className="text-xl font-bold mb-0.5">Ibu Siti</p>
-              <p className="text-[#8b7355] text-[10px] uppercase tracking-[0.15em] font-semibold mb-3">Wedding & Fashion</p>
-              <p className="text-white/50 text-xs leading-relaxed mb-4">
-                Penyedia sewa baju pengantin, kebaya tradisional & dekorasi pernikahan terpercaya sejak 1995.
-              </p>
-              <button
-                onClick={() => whatsapp()}
-                className="inline-flex items-center gap-1.5 bg-[#8b7355] hover:bg-[#a88968] text-white text-xs font-semibold px-4 py-2.5 rounded-full transition-colors"
-              >
-                <MessageCircle size={13} />
-                WhatsApp Kami
-              </button>
-            </div>
+      <footer className="bg-[#0e0b09] text-white relative overflow-hidden">
+        <div className="noise-overlay opacity-[0.02]" />
+        {/* Top border accent */}
+        <div className="h-px bg-gradient-to-r from-transparent via-[#8b7355]/40 to-transparent" />
 
-            {/* Links */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-10 relative">
+          {/* Brand statement row */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-14 border-b border-white/[0.07] mb-14">
+            <div className="max-w-md">
+              <div className="flex items-baseline gap-3 mb-2">
+                <span className="font-black text-2xl tracking-tight text-white" style={{ letterSpacing: '-0.02em' }}>Ibu Siti</span>
+                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#d4a574]/70">Wedding & Fashion</span>
+              </div>
+              <p className="text-white/35 text-sm leading-[1.8] max-w-sm">
+                Penyedia sewa gaun pengantin, kebaya tradisional & baju adat berkualitas premium terpercaya sejak 1995 — mendampingi lebih dari 5.000 pasangan di hari istimewa mereka.
+              </p>
+            </div>
+            <div className="flex gap-2.5">
+              {[
+                { icon: Instagram, label: 'Instagram' },
+                { icon: Facebook,  label: 'Facebook' },
+                { icon: Youtube,   label: 'YouTube' },
+              ].map(({ icon: Icon, label }) => (
+                <button
+                  key={label}
+                  aria-label={label}
+                  className="w-10 h-10 rounded-2xl bg-white/[0.05] hover:bg-[#d4a574] flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 border border-white/[0.08]"
+                >
+                  <Icon size={15} className="text-white" />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Links grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 pb-14 border-b border-white/[0.07] mb-10">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/40 mb-4">Menu</p>
-              <ul className="space-y-2.5">
+              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-white/25 mb-5">Menu</p>
+              <ul className="space-y-3">
                 {[
                   { label: 'Beranda', href: '#' },
                   { label: 'Koleksi Terbaru', href: '#koleksi' },
@@ -1265,63 +1410,60 @@ export default function LandingPage() {
                   { label: 'FAQ', href: '#faq' },
                 ].map(({ label, href }) => (
                   <li key={label}>
-                    <a href={href} className="text-white/55 hover:text-white text-xs transition-colors">{label}</a>
+                    <a href={href} className="text-white/40 hover:text-white/80 text-xs font-medium transition-colors duration-200">{label}</a>
                   </li>
                 ))}
               </ul>
             </div>
 
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/40 mb-4">Layanan</p>
-              <ul className="space-y-2.5">
+              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-white/25 mb-5">Layanan</p>
+              <ul className="space-y-3">
                 {['Sewa Baju', 'Dekorasi Pernikahan', 'Konsultasi Styling', 'Rias Pengantin', 'Fotografi', 'Antar-jemput'].map(item => (
                   <li key={item}>
-                    <a href="#" className="text-white/55 hover:text-white text-xs transition-colors">{item}</a>
+                    <a href="#" className="text-white/40 hover:text-white/80 text-xs font-medium transition-colors duration-200">{item}</a>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/40 mb-4">Kontak</p>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-2.5 text-xs text-white/55">
-                  <MapPin size={13} className="text-[#8b7355] mt-0.5 flex-shrink-0" />
-                  Jl. Contoh No. 123, Jakarta Selatan, DKI Jakarta
+            <div className="col-span-2">
+              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-white/25 mb-5">Kontak & Lokasi</p>
+              <ul className="space-y-4 mb-6">
+                <li className="flex items-start gap-3">
+                  <div className="w-7 h-7 rounded-xl bg-white/[0.06] flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <MapPin size={12} className="text-[#d4a574]" />
+                  </div>
+                  <span className="text-white/40 text-xs leading-relaxed font-medium">Jl. Contoh No. 123, Jakarta Selatan, DKI Jakarta 12345</span>
                 </li>
-                <li className="flex items-center gap-2.5 text-xs text-white/55">
-                  <Phone size={13} className="text-[#8b7355] flex-shrink-0" />
-                  +62 812 3456 78
+                <li className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-xl bg-white/[0.06] flex items-center justify-center flex-shrink-0">
+                    <Phone size={12} className="text-[#d4a574]" />
+                  </div>
+                  <a href="tel:+6281234567" className="text-white/40 hover:text-white/70 text-xs font-medium transition-colors">+62 812 3456 78</a>
                 </li>
-                <li className="flex items-center gap-2.5 text-xs text-white/55">
-                  <MessageCircle size={13} className="text-[#8b7355] flex-shrink-0" />
-                  Buka setiap hari, 08.00–21.00
+                <li className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-xl bg-white/[0.06] flex items-center justify-center flex-shrink-0">
+                    <MessageCircle size={12} className="text-[#d4a574]" />
+                  </div>
+                  <span className="text-white/40 text-xs font-medium">Buka setiap hari — 08.00–21.00 WIB</span>
                 </li>
               </ul>
-
-              <div className="flex gap-3 mt-5">
-                {[
-                  { icon: Instagram, label: 'Instagram' },
-                  { icon: Facebook,  label: 'Facebook' },
-                  { icon: Youtube,   label: 'YouTube' },
-                ].map(({ icon: Icon, label }) => (
-                  <button
-                    key={label}
-                    aria-label={label}
-                    className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#8b7355] flex items-center justify-center transition-colors"
-                  >
-                    <Icon size={14} className="text-white" />
-                  </button>
-                ))}
-              </div>
+              <button
+                onClick={() => whatsapp()}
+                className="inline-flex items-center gap-2 bg-[#d4a574] hover:bg-[#c49562] text-[#0e0b09] text-xs font-black px-5 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-gold"
+              >
+                <MessageCircle size={13} />
+                WhatsApp Kami
+              </button>
             </div>
           </div>
 
-          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/35">
-            <p>© {new Date().getFullYear()} Ibu Siti Wedding & Fashion. Semua hak dilindungi.</p>
-            <div className="flex gap-5">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-white/22 text-xs">© {new Date().getFullYear()} Ibu Siti Wedding & Fashion. Semua hak dilindungi.</p>
+            <div className="flex gap-6">
               {['Kebijakan Privasi', 'Syarat & Ketentuan'].map(s => (
-                <a key={s} href="#" className="hover:text-white/60 transition-colors">{s}</a>
+                <a key={s} href="#" className="text-white/22 hover:text-white/50 text-xs transition-colors">{s}</a>
               ))}
             </div>
           </div>
