@@ -64,6 +64,52 @@ function useReveal() {
   }, [])
 }
 
+/* ─── Custom cursor (desktop only, RAF lerp) ─── */
+function Cursor() {
+  const dotRef = useRef<HTMLDivElement>(null)
+  const ringRef = useRef<HTMLDivElement>(null)
+  const pos = useRef({ x: -100, y: -100 })
+  const ring = useRef({ x: -100, y: -100 })
+
+  useEffect(() => {
+    if (window.matchMedia('(pointer: coarse)').matches) return
+    let raf: number
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+    const tick = () => {
+      ring.current.x = lerp(ring.current.x, pos.current.x, 0.1)
+      ring.current.y = lerp(ring.current.y, pos.current.y, 0.1)
+      if (dotRef.current) dotRef.current.style.transform = `translate(${pos.current.x}px,${pos.current.y}px)`
+      if (ringRef.current) ringRef.current.style.transform = `translate(${ring.current.x}px,${ring.current.y}px)`
+      raf = requestAnimationFrame(tick)
+    }
+    const onMove = (e: MouseEvent) => { pos.current = { x: e.clientX, y: e.clientY } }
+    const onOver = (e: MouseEvent) => {
+      if (!ringRef.current) return
+      const hover = !!(e.target as Element).closest('button,a,[role="button"],.cursor-pointer')
+      ringRef.current.style.width = hover ? '54px' : '36px'
+      ringRef.current.style.height = hover ? '54px' : '36px'
+      ringRef.current.style.marginTop = hover ? '-27px' : '-18px'
+      ringRef.current.style.marginLeft = hover ? '-27px' : '-18px'
+      ringRef.current.style.borderColor = hover ? 'rgba(212,165,116,0.85)' : 'rgba(212,165,116,0.5)'
+    }
+    document.addEventListener('mousemove', onMove, { passive: true })
+    document.addEventListener('mouseover', onOver)
+    raf = requestAnimationFrame(tick)
+    return () => {
+      document.removeEventListener('mousemove', onMove)
+      document.removeEventListener('mouseover', onOver)
+      cancelAnimationFrame(raf)
+    }
+  }, [])
+
+  return (
+    <>
+      <div ref={dotRef} className="cursor-dot hidden lg:block" />
+      <div ref={ringRef} className="cursor-ring hidden lg:block" />
+    </>
+  )
+}
+
 /* ─── Star row ─── */
 function Stars({ rating, size = 13 }: { rating: number; size?: number }) {
   return (
@@ -209,6 +255,7 @@ export default function LandingPage() {
   const [heroParallax, setHeroParallax] = useState(0)
   const [statsVisible, setStatsVisible] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [navScrolled, setNavScrolled] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const toastIdRef = useRef(0)
   const statsRef = useRef<HTMLDivElement>(null)
@@ -229,7 +276,7 @@ export default function LandingPage() {
     localStorage.setItem('ibu-siti-wishlist', JSON.stringify(wishlist))
   }, [wishlist])
 
-  /* ── Scroll: back-to-top + hero parallax + progress ── */
+  /* ── Scroll: back-to-top + hero parallax + progress + nav ── */
   useEffect(() => {
     const h = () => {
       const y = window.scrollY
@@ -237,6 +284,7 @@ export default function LandingPage() {
       setHeroParallax(y * 0.28)
       const docH = document.documentElement.scrollHeight - window.innerHeight
       setScrollProgress(docH > 0 ? Math.min((y / docH) * 100, 100) : 0)
+      setNavScrolled(y > 72)
     }
     window.addEventListener('scroll', h, { passive: true })
     return () => window.removeEventListener('scroll', h)
@@ -387,6 +435,7 @@ export default function LandingPage() {
   ══════════════════════════════════ */
   return (
     <div className="min-h-screen bg-[#faf8f6] overflow-x-hidden pb-16 sm:pb-0">
+      <Cursor />
 
       {/* ── Toast Notifications ── */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] flex flex-col gap-2 items-center pointer-events-none">
@@ -484,16 +533,23 @@ export default function LandingPage() {
       </div>
 
       {/* ── HEADER ── */}
-      <header className="sticky top-0.5 z-50 bg-white/96 backdrop-blur-md border-b border-[#e0d5cb]" style={{ boxShadow: '0 1px 12px rgba(45,36,32,0.07)' }}>
+      <header
+        className={`sticky top-0.5 z-50 nav-scrolled border-b ${
+          navScrolled
+            ? 'bg-white/97 backdrop-blur-md border-[#e0d5cb]'
+            : 'bg-transparent border-transparent'
+        }`}
+        style={navScrolled ? { boxShadow: '0 1px 20px rgba(45,36,32,0.09)' } : {}}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-[60px] gap-3">
+          <div className="flex items-center justify-between h-[64px] gap-3">
 
             {/* Logo */}
             <a href="#" className="flex-shrink-0 group" aria-label="Ibu Siti - Beranda">
-              <span className="text-xl sm:text-2xl font-bold text-[#2d2420] group-hover:text-[#8b7355] transition-colors tracking-tight">
+              <span className={`text-xl sm:text-2xl font-black tracking-tight transition-colors duration-400 ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white group-hover:text-[#d4a574]'}`} style={{ letterSpacing: '-0.02em' }}>
                 Ibu Siti
               </span>
-              <span className="text-[9px] text-[#8b7355] font-medium block -mt-0.5 tracking-[0.15em] uppercase">
+              <span className={`text-[9px] font-bold block -mt-0.5 tracking-[0.18em] uppercase transition-colors duration-400 ${navScrolled ? 'text-[#8b7355]' : 'text-white/50'}`}>
                 Wedding & Fashion
               </span>
             </a>
@@ -510,10 +566,10 @@ export default function LandingPage() {
                 <a
                   key={label}
                   href={href}
-                  className="text-[13px] font-medium text-[#2d2420] hover:text-[#8b7355] transition-colors relative group py-1"
+                  className={`text-[13px] font-semibold transition-colors duration-400 relative group py-1 ${navScrolled ? 'text-[#2d2420] hover:text-[#8b7355]' : 'text-white/80 hover:text-[#d4a574]'}`}
                 >
                   {label}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#8b7355] transition-all duration-300 group-hover:w-full rounded-full" />
+                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full ${navScrolled ? 'bg-[#8b7355]' : 'bg-[#d4a574]'}`} />
                 </a>
               ))}
             </nav>
@@ -523,22 +579,22 @@ export default function LandingPage() {
               <button
                 aria-label="Cari produk (Ctrl+K)"
                 onClick={() => setSearchOpen(true)}
-                className="p-2.5 rounded-full hover:bg-[#f5f0eb] transition-colors group"
+                className={`p-2.5 rounded-full transition-colors group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
               >
-                <Search size={18} className="text-[#2d2420] group-hover:text-[#8b7355] transition-colors" />
+                <Search size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/80 group-hover:text-white'}`} />
               </button>
 
-              <button aria-label="Akun saya" className="p-2.5 rounded-full hover:bg-[#f5f0eb] transition-colors group hidden sm:flex">
-                <User size={18} className="text-[#2d2420] group-hover:text-[#8b7355] transition-colors" />
+              <button aria-label="Akun saya" className={`p-2.5 rounded-full transition-colors group hidden sm:flex ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}>
+                <User size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/80 group-hover:text-white'}`} />
               </button>
 
               <button
                 aria-label="Wishlist"
-                className="p-2.5 rounded-full hover:bg-[#f5f0eb] transition-colors relative group"
+                className={`p-2.5 rounded-full transition-colors relative group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
               >
-                <Heart size={18} className={wishlist.length > 0 ? 'fill-[#8b7355] text-[#8b7355]' : 'text-[#2d2420] group-hover:text-[#8b7355] transition-colors'} />
+                <Heart size={18} className={wishlist.length > 0 ? 'fill-[#d4a574] text-[#d4a574]' : `transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/80 group-hover:text-white'}`} />
                 {wishlist.length > 0 && (
-                  <span className="absolute top-1 right-1 bg-[#8b7355] text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center leading-none">
+                  <span className="absolute top-1 right-1 bg-[#d4a574] text-[#0e0b09] text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center leading-none">
                     {wishlist.length}
                   </span>
                 )}
@@ -546,11 +602,11 @@ export default function LandingPage() {
 
               <button
                 aria-label="Keranjang"
-                className="p-2.5 rounded-full hover:bg-[#f5f0eb] transition-colors relative group"
+                className={`p-2.5 rounded-full transition-colors relative group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
               >
-                <ShoppingBag size={18} className="text-[#2d2420] group-hover:text-[#8b7355] transition-colors" />
+                <ShoppingBag size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/80 group-hover:text-white'}`} />
                 {cartCount > 0 && (
-                  <span className="absolute top-1 right-1 bg-[#2d2420] text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center leading-none">
+                  <span className="absolute top-1 right-1 bg-[#d4a574] text-[#0e0b09] text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center leading-none">
                     {cartCount}
                   </span>
                 )}
@@ -560,11 +616,11 @@ export default function LandingPage() {
               <button
                 aria-label={mobileMenuOpen ? 'Tutup menu' : 'Buka menu'}
                 onClick={() => setMobileMenuOpen(o => !o)}
-                className="lg:hidden p-2.5 rounded-full hover:bg-[#f5f0eb] transition-colors ml-1"
+                className={`lg:hidden p-2.5 rounded-full transition-colors ml-1 ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
               >
                 {mobileMenuOpen
-                  ? <X size={20} className="text-[#2d2420]" />
-                  : <Menu size={20} className="text-[#2d2420]" />
+                  ? <X size={20} className={navScrolled ? 'text-[#2d2420]' : 'text-white'} />
+                  : <Menu size={20} className={navScrolled ? 'text-[#2d2420]' : 'text-white'} />
                 }
               </button>
             </div>
@@ -641,21 +697,27 @@ export default function LandingPage() {
 
               {/* ── Left: Text block ── */}
               <div>
-                <div className="eyebrow text-[#d4a574] mb-6 animate-fade-in-up">
+                <div className="eyebrow text-[#d4a574] mb-7 animate-eyebrow-in" style={{ animationDelay: '40ms' }}>
                   Koleksi Eksklusif 2024
                 </div>
 
                 <h1
-                  className="font-black text-white leading-[1.03] mb-6 animate-fade-in-up"
-                  style={{ fontSize: 'clamp(2.8rem, 7.5vw, 5.8rem)', animationDelay: '80ms', letterSpacing: '-0.02em' }}
+                  className="font-black text-white leading-[1.08] mb-8"
+                  style={{ fontSize: 'clamp(2.8rem, 7.5vw, 5.8rem)', letterSpacing: '-0.025em' }}
                 >
-                  Tampil<br />
-                  <span className="font-serif italic text-gradient-gold">Percaya Diri</span><br />
-                  Setiap Saat
+                  <span className="block overflow-hidden leading-[1.12]">
+                    <span className="block animate-word-up" style={{ animationDelay: '100ms' }}>Tampil</span>
+                  </span>
+                  <span className="block overflow-hidden leading-[1.12]">
+                    <span className="block animate-word-up font-serif italic text-gradient-gold" style={{ animationDelay: '220ms' }}>Percaya Diri</span>
+                  </span>
+                  <span className="block overflow-hidden leading-[1.12]">
+                    <span className="block animate-word-up" style={{ animationDelay: '340ms' }}>Setiap Saat</span>
+                  </span>
                 </h1>
 
                 <p
-                  className="text-white/65 leading-[1.75] mb-10 animate-fade-in-up max-w-md"
+                  className="text-white/60 leading-[1.8] mb-10 animate-fade-in-up max-w-md"
                   style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1.05rem)', animationDelay: '180ms' }}
                 >
                   Sewa gaun pengantin, kebaya tradisional & baju adat berkualitas premium untuk momen istimewa Anda.
@@ -714,14 +776,28 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="relative z-10 pb-8 flex justify-center pointer-events-none">
-          <div className="flex flex-col items-center gap-2 animate-float opacity-60">
-            <span className="text-white/50 text-[8px] uppercase tracking-[0.35em] font-medium">Scroll</span>
-            <div className="w-px h-10 bg-gradient-to-b from-white/50 to-transparent" />
+        {/* Scroll indicator — premium mouse icon */}
+        <div className="relative z-10 pb-10 flex justify-center pointer-events-none">
+          <div className="flex flex-col items-center gap-3 animate-float" style={{ animationDelay: '600ms' }}>
+            <div className="scroll-mouse opacity-60" />
+            <span className="text-white/35 text-[8px] uppercase tracking-[0.4em] font-bold mt-1">Scroll</span>
           </div>
         </div>
       </section>
+
+      {/* ══════════════════════════════════
+          MARQUEE STRIP
+      ══════════════════════════════════ */}
+      <div className="overflow-hidden bg-[#0e0b09] py-5 border-y border-white/[0.04]" aria-hidden="true">
+        <div className="marquee-track select-none">
+          {[...brandsFull, ...brandsFull].map((b, i) => (
+            <span key={i} className="inline-flex items-center gap-6 px-6">
+              <span className="text-white/22 text-[10px] font-black uppercase tracking-[0.28em] whitespace-nowrap">{b}</span>
+              <span className="text-[#d4a574]/30 text-[6px]">✦</span>
+            </span>
+          ))}
+        </div>
+      </div>
 
       {/* ══════════════════════════════════
           STATS BAR
@@ -904,7 +980,22 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {/* Mobile: horizontal snap scroll */}
+          <div className="sm:hidden -mx-4 px-4 scroll-x-snap gap-4 pb-4">
+            {latestProducts.map((p, i) => (
+              <div key={p.id} className={`w-[78vw] max-w-[300px] reveal delay-${(i + 1) * 100 as 100 | 200 | 300}`}>
+                <ProductCard
+                  product={p}
+                  isWishlisted={wishlist.includes(p.id)}
+                  onWishlist={toggleWishlist}
+                  onView={openModal}
+                  onOrder={whatsapp}
+                />
+              </div>
+            ))}
+          </div>
+          {/* Tablet/Desktop: grid */}
+          <div className="hidden sm:grid grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {latestProducts.map((p, i) => (
               <div key={p.id} className={`reveal delay-${(i + 1) * 100 as 100 | 200 | 300}`}>
                 <ProductCard
@@ -1138,7 +1229,23 @@ export default function LandingPage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {/* Mobile: horizontal snap scroll */}
+          <div className="sm:hidden -mx-4 px-4 scroll-x-snap gap-4 pb-4">
+            {featuredProducts.map((p, i) => (
+              <div key={p.id} className={`w-[62vw] max-w-[220px] reveal delay-${(i * 100) as 0 | 100 | 200 | 300}`}>
+                <ProductCard
+                  product={p}
+                  isWishlisted={wishlist.includes(p.id)}
+                  onWishlist={toggleWishlist}
+                  onView={openModal}
+                  onOrder={whatsapp}
+                  size="sm"
+                />
+              </div>
+            ))}
+          </div>
+          {/* Tablet/Desktop: grid */}
+          <div className="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {featuredProducts.map((p, i) => (
               <div key={p.id} className={`reveal delay-${(i * 100) as 0 | 100 | 200 | 300}`}>
                 <ProductCard
