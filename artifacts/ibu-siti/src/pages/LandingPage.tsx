@@ -212,12 +212,14 @@ function ProductCard({
       {/* Info */}
       <div className="mt-4 space-y-2">
         {/* Color indicator + rating */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <Stars rating={product.rating} size={12} />
+        <div className="flex items-center justify-between gap-1">
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <Stars rating={product.rating} size={11} />
             <span className="text-[10px] text-[#8b7355] font-medium">({product.reviews})</span>
           </div>
-          <span className="text-[10px] text-[#8b7355]/60 font-medium bg-[#f5f0eb] px-2 py-0.5 rounded-full">{product.color}</span>
+          <span className={`text-[9px] text-[#8b7355]/60 font-medium bg-[#f5f0eb] px-1.5 py-0.5 rounded-full truncate max-w-[70px] ${size === 'sm' ? 'hidden sm:block' : ''}`}>
+            {product.color}
+          </span>
         </div>
         <h3
           className="font-bold text-[#2d2420] text-sm leading-snug group-hover:text-[#8b7355] transition-colors cursor-pointer line-clamp-1"
@@ -256,9 +258,11 @@ export default function LandingPage() {
   const [statsVisible, setStatsVisible] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
   const [navScrolled, setNavScrolled] = useState(false)
+  const [navHidden, setNavHidden] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const toastIdRef = useRef(0)
   const statsRef = useRef<HTMLDivElement>(null)
+  const lastScrollYRef = useRef(0)
 
   useReveal()
 
@@ -276,7 +280,7 @@ export default function LandingPage() {
     localStorage.setItem('ibu-siti-wishlist', JSON.stringify(wishlist))
   }, [wishlist])
 
-  /* ── Scroll: back-to-top + hero parallax + progress + nav ── */
+  /* ── Scroll: back-to-top + hero parallax + progress + nav + auto-hide ── */
   useEffect(() => {
     const h = () => {
       const y = window.scrollY
@@ -285,6 +289,17 @@ export default function LandingPage() {
       const docH = document.documentElement.scrollHeight - window.innerHeight
       setScrollProgress(docH > 0 ? Math.min((y / docH) * 100, 100) : 0)
       setNavScrolled(y > 72)
+      // Auto-hide navbar on mobile when scrolling down
+      if (y > 120) {
+        if (y > lastScrollYRef.current + 8) {
+          setNavHidden(true)   // scrolling down → hide
+        } else if (y < lastScrollYRef.current - 8) {
+          setNavHidden(false)  // scrolling up → show
+        }
+      } else {
+        setNavHidden(false)    // near top → always show
+      }
+      lastScrollYRef.current = y
     }
     window.addEventListener('scroll', h, { passive: true })
     return () => window.removeEventListener('scroll', h)
@@ -532,10 +547,12 @@ export default function LandingPage() {
       )}
 
       {/* ── HEADER ── */}
-      {/* Mobile: always floats (top-3, island). Desktop: conditional on scroll */}
+      {/* Mobile: always floats, auto-hides on scroll-down. Desktop: conditional on scroll */}
       <header
-        className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] top-3 ${
+        className={`fixed left-0 right-0 z-50 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] top-3 ${
           navScrolled ? '' : 'lg:top-0'
+        } ${
+          navHidden ? '-translate-y-[calc(100%+16px)] lg:translate-y-0' : 'translate-y-0'
         }`}
       >
         {/* Island wrapper — always island on mobile, conditional on desktop */}
@@ -1322,30 +1339,30 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Row 1 — scroll left */}
-        <div className="relative mb-4 overflow-hidden">
+        {/* Single row — infinite auto-scroll left */}
+        <div className="relative overflow-hidden">
           <div className="testimonial-track-left flex gap-4" style={{ width: 'max-content' }}>
             {[...testimonials, ...testimonials, ...testimonials].map((t, i) => (
               <article
                 key={i}
-                className="relative bg-white rounded-[24px] p-6 border border-[#e0d5cb] hover:border-[#8b7355]/40 hover:shadow-premium-lg transition-all duration-400 group overflow-hidden cursor-default flex-shrink-0"
-                style={{ width: '340px' }}
+                className="relative bg-white rounded-[24px] p-5 sm:p-6 border border-[#e0d5cb] hover:border-[#8b7355]/40 hover:shadow-premium-lg transition-all duration-400 group overflow-hidden cursor-default flex-shrink-0"
+                style={{ width: 'clamp(280px, 80vw, 340px)' }}
               >
                 <div
                   className="absolute -top-2 -left-1 text-[#e0d5cb]/70 group-hover:text-[#d4a574]/20 transition-colors duration-400 select-none pointer-events-none"
-                  style={{ fontSize: '6rem', lineHeight: 1, fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontWeight: 800 }}
+                  style={{ fontSize: '5rem', lineHeight: 1, fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontWeight: 800 }}
                   aria-hidden="true"
                 >"</div>
                 <div className="relative z-10">
-                  <div className="flex items-center gap-1.5 mb-4">
-                    <Stars rating={t.rating} size={13} />
+                  <div className="flex items-center gap-1.5 mb-3">
+                    <Stars rating={t.rating} size={12} />
                     <span className="text-[9px] font-bold text-[#d4a574] bg-[#d4a574]/10 px-2 py-0.5 rounded-full ml-1">Terverifikasi</span>
                   </div>
-                  <blockquote className="text-[#2d2420] text-sm leading-[1.75] mb-5 font-medium line-clamp-3">
+                  <blockquote className="text-[#2d2420] text-sm leading-[1.75] mb-4 font-medium line-clamp-3">
                     {t.feedback}
                   </blockquote>
-                  <div className="flex items-center gap-3 border-t border-[#e0d5cb] pt-4">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#8b7355]/20 to-[#d4a574]/20 flex items-center justify-center text-lg flex-shrink-0 ring-2 ring-[#e0d5cb] group-hover:ring-[#8b7355]/30 transition-all duration-400">
+                  <div className="flex items-center gap-3 border-t border-[#e0d5cb] pt-3">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#8b7355]/20 to-[#d4a574]/20 flex items-center justify-center text-base flex-shrink-0 ring-2 ring-[#e0d5cb] group-hover:ring-[#8b7355]/30 transition-all duration-400">
                       {t.avatar}
                     </div>
                     <div>
@@ -1358,48 +1375,8 @@ export default function LandingPage() {
             ))}
           </div>
           {/* Fade edges */}
-          <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#faf8f6] to-transparent pointer-events-none z-10" />
-          <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#faf8f6] to-transparent pointer-events-none z-10" />
-        </div>
-
-        {/* Row 2 — scroll right */}
-        <div className="relative overflow-hidden">
-          <div className="testimonial-track-right flex gap-4" style={{ width: 'max-content' }}>
-            {[...testimonials.slice(4), ...testimonials.slice(0, 4), ...testimonials.slice(4), ...testimonials.slice(0, 4)].map((t, i) => (
-              <article
-                key={i}
-                className="relative bg-white rounded-[24px] p-6 border border-[#e0d5cb] hover:border-[#8b7355]/40 hover:shadow-premium-lg transition-all duration-400 group overflow-hidden cursor-default flex-shrink-0"
-                style={{ width: '340px' }}
-              >
-                <div
-                  className="absolute -top-2 -left-1 text-[#e0d5cb]/70 group-hover:text-[#d4a574]/20 transition-colors duration-400 select-none pointer-events-none"
-                  style={{ fontSize: '6rem', lineHeight: 1, fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontWeight: 800 }}
-                  aria-hidden="true"
-                >"</div>
-                <div className="relative z-10">
-                  <div className="flex items-center gap-1.5 mb-4">
-                    <Stars rating={t.rating} size={13} />
-                    <span className="text-[9px] font-bold text-[#d4a574] bg-[#d4a574]/10 px-2 py-0.5 rounded-full ml-1">Terverifikasi</span>
-                  </div>
-                  <blockquote className="text-[#2d2420] text-sm leading-[1.75] mb-5 font-medium line-clamp-3">
-                    {t.feedback}
-                  </blockquote>
-                  <div className="flex items-center gap-3 border-t border-[#e0d5cb] pt-4">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#8b7355]/20 to-[#d4a574]/20 flex items-center justify-center text-lg flex-shrink-0 ring-2 ring-[#e0d5cb] group-hover:ring-[#8b7355]/30 transition-all duration-400">
-                      {t.avatar}
-                    </div>
-                    <div>
-                      <p className="font-black text-[#2d2420] text-sm" style={{ letterSpacing: '-0.01em' }}>{t.name}</p>
-                      <p className="text-[10px] text-[#8b7355] font-medium mt-0.5">{t.role}</p>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-          {/* Fade edges */}
-          <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#faf8f6] to-transparent pointer-events-none z-10" />
-          <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#faf8f6] to-transparent pointer-events-none z-10" />
+          <div className="absolute inset-y-0 left-0 w-16 sm:w-24 bg-gradient-to-r from-[#faf8f6] to-transparent pointer-events-none z-10" />
+          <div className="absolute inset-y-0 right-0 w-16 sm:w-24 bg-gradient-to-l from-[#faf8f6] to-transparent pointer-events-none z-10" />
         </div>
       </section>
 
