@@ -549,39 +549,40 @@ export default function LandingPage() {
       {/* ── HEADER ── */}
       {/* Mobile: always floats, auto-hides on scroll-down. Desktop: conditional on scroll */}
       <header
-        className={`fixed left-0 right-0 z-50 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] top-3 ${
-          navScrolled ? '' : 'lg:top-0'
+        className={`fixed left-0 right-0 z-50 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          navScrolled ? 'top-3' : 'top-2 lg:top-0'
         } ${
           navHidden ? '-translate-y-[calc(100%+16px)] lg:translate-y-0' : 'translate-y-0'
         }`}
       >
-        {/* Island wrapper — always island on mobile, conditional on desktop */}
+        {/* Wrapper — transparent when at top, island when scrolled */}
         <div
-          className={`transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
-            mx-4 bg-white/96 backdrop-blur-xl rounded-[22px] border border-[#e0d5cb]/70 px-4
-            ${navScrolled
-              ? 'sm:mx-8 lg:mx-14 xl:mx-auto xl:max-w-[1240px] sm:px-6'
-              : 'sm:mx-4 lg:mx-auto lg:bg-transparent lg:backdrop-blur-none lg:border-transparent lg:rounded-none lg:max-w-7xl lg:px-12 nav-island-shadow'
-            }`}
+          className={`transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            navScrolled
+              ? 'mx-4 sm:mx-8 lg:mx-14 xl:mx-auto xl:max-w-[1240px] bg-white/96 backdrop-blur-xl rounded-[22px] border border-[#e0d5cb]/70 px-4 sm:px-6'
+              : 'mx-0 max-w-7xl lg:mx-auto px-4 lg:px-12'
+          }`}
           style={navScrolled
             ? { boxShadow: '0 8px 40px rgba(45,36,32,0.13), 0 2px 8px rgba(45,36,32,0.06)' }
             : {}
           }
         >
-          <div className={`flex items-center justify-between gap-3 h-[54px] lg:transition-all lg:duration-500 ${navScrolled ? 'lg:h-[56px]' : 'lg:h-[68px]'}`}>
+          <div className={`flex items-center justify-between gap-3 transition-all duration-300 ${navScrolled ? 'h-[54px] lg:h-[56px]' : 'h-[60px] lg:h-[68px]'}`}>
 
-            {/* Logo — dark on mobile always (white bg), conditional on desktop */}
+            {/* Logo — white when transparent, dark when island */}
             <a href="#" className="flex-shrink-0 group" aria-label="Ibu Siti - Beranda">
               <span
-                className={`font-black tracking-tight text-[#2d2420] group-hover:text-[#8b7355] transition-colors duration-300 text-lg sm:text-xl ${
-                  navScrolled ? '' : 'lg:text-white lg:group-hover:text-[#d4a574]'
+                className={`font-black tracking-tight transition-colors duration-300 text-lg sm:text-xl ${
+                  navScrolled
+                    ? 'text-[#2d2420] group-hover:text-[#8b7355]'
+                    : 'text-white group-hover:text-[#d4a574]'
                 }`}
                 style={{ letterSpacing: '-0.02em' }}
               >
                 Ibu Siti
               </span>
-              <span className={`text-[8px] font-bold block -mt-0.5 tracking-[0.18em] uppercase text-[#8b7355] transition-colors duration-300 ${
-                navScrolled ? '' : 'lg:text-white/75'
+              <span className={`text-[8px] font-bold block -mt-0.5 tracking-[0.18em] uppercase transition-colors duration-300 ${
+                navScrolled ? 'text-[#8b7355]' : 'text-white/75'
               }`}>
                 Wedding & Fashion
               </span>
@@ -642,15 +643,17 @@ export default function LandingPage() {
                 {cartCount > 0 && <span className="absolute top-1 right-1 bg-[#d4a574] text-[#0e0b09] text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center leading-none">{cartCount}</span>}
               </button>
 
-              {/* Mobile: hamburger only — always dark since mobile bg is white */}
+              {/* Mobile: hamburger only — color follows scroll state */}
               <button
                 aria-label={mobileMenuOpen ? 'Tutup menu' : 'Buka menu'}
                 onClick={() => setMobileMenuOpen(o => !o)}
-                className="lg:hidden p-2 rounded-xl transition-colors hover:bg-[#f5f0eb] active:scale-95"
+                className={`lg:hidden p-2 rounded-xl transition-colors active:scale-95 ${
+                  navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'
+                }`}
               >
                 {mobileMenuOpen
-                  ? <X size={22} className="text-[#2d2420]" />
-                  : <Menu size={22} className="text-[#2d2420]" />
+                  ? <X size={22} className={navScrolled ? 'text-[#2d2420]' : 'text-white'} />
+                  : <Menu size={22} className={navScrolled ? 'text-[#2d2420]' : 'text-white'} />
                 }
               </button>
             </div>
