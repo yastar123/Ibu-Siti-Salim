@@ -399,9 +399,14 @@ export default function LandingPage() {
   const brandsFull = [...brands, ...brands]
 
   const testimonials = [
-    { name: 'Ibu Khalim Santoso', role: 'Pengantin, Maret 2024', feedback: 'Gaun pengantin ini sangat indah dan nyaman dipakai sepanjang hari. Bahan premium dan jahitannya rapi sekali. Terima kasih Ibu Siti, momen pernikahan kami jadi sempurna!', rating: 5, avatar: '👰' },
-    { name: 'Keluarga Aprilia', role: 'Resepsi Pernikahan, 2024', feedback: 'Layanan dekorasi dan baju yang luar biasa profesional. Tim Ibu Siti sangat responsif dan membantu dari awal hingga akhir. Hari spesial kami benar-benar sempurna!', rating: 5, avatar: '💍' },
+    { name: 'Ibu Khalim Santoso', role: 'Pengantin, Maret 2024', feedback: 'Gaun pengantin ini sangat indah dan nyaman dipakai sepanjang hari. Bahan premium dan jahitannya rapi sekali. Momen pernikahan kami jadi sempurna!', rating: 5, avatar: '👰' },
+    { name: 'Keluarga Aprilia', role: 'Resepsi Pernikahan, 2024', feedback: 'Layanan yang luar biasa profesional. Tim Ibu Siti sangat responsif dan membantu dari awal hingga akhir. Hari spesial kami benar-benar sempurna!', rating: 5, avatar: '💍' },
     { name: 'Ibu Siti Salim', role: 'Acara Adat, Februari 2024', feedback: 'Koleksi baju adat sangat lengkap dan berkualitas tinggi. Pilihan motif dan warna sangat beragam. Kami sangat puas dan pasti akan kembali!', rating: 5, avatar: '👗' },
+    { name: 'Dewi Rahayu', role: 'Pernikahan Adat Jawa, 2024', feedback: 'Kebaya yang saya sewa benar-benar memukau semua tamu. Detail bordir emas yang indah dan bahan yang sangat nyaman. Sangat merekomendasikan!', rating: 5, avatar: '🌸' },
+    { name: 'Keluarga Budi Santoso', role: 'Resepsi Mewah, Januari 2024', feedback: 'Pilihan gaun sangat beragam dan semuanya berkualitas premium. Pelayanan ramah dan profesional. Akan selalu kembali ke Ibu Siti untuk acara berikutnya!', rating: 5, avatar: '✨' },
+    { name: 'Ibu Ratna Dewi', role: 'Acara Wisuda, 2024', feedback: 'Dress yang dipilihkan sangat sesuai dengan tubuh saya. Fitting gratis sangat membantu. Ibu Siti benar-benar memahami kebutuhan pelanggan!', rating: 5, avatar: '🎓' },
+    { name: 'Putri Anggraini', role: 'Pengantin, April 2024', feedback: 'Sewa gaun di sini pengalaman terbaik yang pernah saya rasakan. Kualitas gaun pengantin premium dengan harga yang sangat terjangkau. Terima kasih!', rating: 5, avatar: '💐' },
+    { name: 'Keluarga Hendra', role: 'Pernikahan Adat Batak, 2024', feedback: 'Baju adat Batak yang kami sewa autentik dan sangat indah. Detail motif ulos yang kaya makna. Tim Ibu Siti sangat mengerti tradisi kami!', rating: 5, avatar: '🏆' },
   ]
 
   const faqs = [
@@ -553,13 +558,12 @@ export default function LandingPage() {
             </a>
 
             {/* Desktop nav */}
-            <nav className="hidden lg:flex items-center gap-6">
+            <nav className="hidden lg:flex items-center gap-7">
               {[
                 { label: 'Koleksi', href: '#koleksi' },
-                { label: 'Kategori', href: '#kategori' },
                 { label: 'Unggulan', href: '#unggulan' },
-                { label: 'Musiman', href: '#musiman' },
                 { label: 'Testimoni', href: '#testimoni' },
+                { label: 'FAQ', href: '#faq' },
               ].map(({ label, href }) => (
                 <a
                   key={label}
@@ -576,6 +580,16 @@ export default function LandingPage() {
                   />
                 </a>
               ))}
+              <button
+                onClick={() => whatsapp()}
+                className={`text-[12px] font-bold px-4 py-2 rounded-full transition-all duration-300 ${
+                  navScrolled
+                    ? 'bg-[#2d2420] text-white hover:bg-[#8b7355]'
+                    : 'bg-white/15 backdrop-blur-sm text-white hover:bg-white/25 border border-white/20'
+                }`}
+              >
+                Konsultasi
+              </button>
             </nav>
 
             {/* Right icons */}
@@ -991,22 +1005,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Mobile: horizontal snap scroll */}
-          <div className="sm:hidden -mx-4 px-4 scroll-x-snap gap-4 pb-4">
-            {latestProducts.map((p, i) => (
-              <div key={p.id} className={`w-[78vw] max-w-[300px] reveal delay-${(i + 1) * 100 as 100 | 200 | 300}`}>
-                <ProductCard
-                  product={p}
-                  isWishlisted={wishlist.includes(p.id)}
-                  onWishlist={toggleWishlist}
-                  onView={openModal}
-                  onOrder={whatsapp}
-                />
-              </div>
-            ))}
-          </div>
-          {/* Tablet/Desktop: grid */}
-          <div className="hidden sm:grid grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {latestProducts.map((p, i) => (
               <div key={p.id} className={`reveal delay-${(i + 1) * 100 as 100 | 200 | 300}`}>
                 <ProductCard
@@ -1240,23 +1239,7 @@ export default function LandingPage() {
             </button>
           </div>
 
-          {/* Mobile: horizontal snap scroll */}
-          <div className="sm:hidden -mx-4 px-4 scroll-x-snap gap-4 pb-4">
-            {featuredProducts.map((p, i) => (
-              <div key={p.id} className={`w-[62vw] max-w-[220px] reveal delay-${(i * 100) as 0 | 100 | 200 | 300}`}>
-                <ProductCard
-                  product={p}
-                  isWishlisted={wishlist.includes(p.id)}
-                  onWishlist={toggleWishlist}
-                  onView={openModal}
-                  onOrder={whatsapp}
-                  size="sm"
-                />
-              </div>
-            ))}
-          </div>
-          {/* Tablet/Desktop: grid */}
-          <div className="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {featuredProducts.map((p, i) => (
               <div key={p.id} className={`reveal delay-${(i * 100) as 0 | 100 | 200 | 300}`}>
                 <ProductCard
@@ -1325,11 +1308,11 @@ export default function LandingPage() {
       </section>
 
       {/* ══════════════════════════════════
-          TESTIMONIALS
+          TESTIMONIALS — infinite auto-scroll
       ══════════════════════════════════ */}
-      <section id="testimoni" className="py-20 sm:py-28 bg-[#faf8f6] overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 sm:mb-20 reveal">
+      <section id="testimoni" className="py-20 sm:py-28 bg-mesh-warm overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-14 sm:mb-18">
+          <div className="text-center reveal">
             <div className="eyebrow justify-center mb-4">Cerita Pelanggan</div>
             <h2
               className="font-black text-[#2d2420] leading-tight mb-4"
@@ -1342,31 +1325,32 @@ export default function LandingPage() {
               Lebih dari 5.000 pelanggan puas telah mempercayakan hari istimewa mereka kepada kami
             </p>
           </div>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
-            {testimonials.map((t, i) => (
+        {/* Row 1 — scroll left */}
+        <div className="relative mb-4 overflow-hidden">
+          <div className="testimonial-track-left flex gap-4" style={{ width: 'max-content' }}>
+            {[...testimonials, ...testimonials, ...testimonials].map((t, i) => (
               <article
                 key={i}
-                className={`relative bg-white rounded-[28px] p-7 sm:p-8 border border-[#e0d5cb] hover:border-[#8b7355]/30 hover:shadow-premium-lg transition-all duration-400 group reveal delay-${(i * 100) as 0 | 100 | 200} overflow-hidden cursor-default`}
+                className="relative bg-white rounded-[24px] p-6 border border-[#e0d5cb] hover:border-[#8b7355]/40 hover:shadow-premium-lg transition-all duration-400 group overflow-hidden cursor-default flex-shrink-0"
+                style={{ width: '340px' }}
               >
-                {/* Decorative large quote mark */}
                 <div
-                  className="absolute -top-3 -left-1 text-[#e0d5cb] group-hover:text-[#d4a574]/20 transition-colors duration-400 select-none pointer-events-none"
-                  style={{ fontSize: '9rem', lineHeight: 1, fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontWeight: 800 }}
+                  className="absolute -top-2 -left-1 text-[#e0d5cb]/70 group-hover:text-[#d4a574]/20 transition-colors duration-400 select-none pointer-events-none"
+                  style={{ fontSize: '6rem', lineHeight: 1, fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontWeight: 800 }}
                   aria-hidden="true"
-                >
-                  "
-                </div>
+                >"</div>
                 <div className="relative z-10">
-                  <div className="flex items-center gap-1.5 mb-5">
-                    <Stars rating={t.rating} size={14} />
+                  <div className="flex items-center gap-1.5 mb-4">
+                    <Stars rating={t.rating} size={13} />
                     <span className="text-[9px] font-bold text-[#d4a574] bg-[#d4a574]/10 px-2 py-0.5 rounded-full ml-1">Terverifikasi</span>
                   </div>
-                  <blockquote className="text-[#2d2420] text-sm leading-[1.8] mb-6 font-medium">
+                  <blockquote className="text-[#2d2420] text-sm leading-[1.75] mb-5 font-medium line-clamp-3">
                     {t.feedback}
                   </blockquote>
-                  <div className="flex items-center gap-3 border-t border-[#e0d5cb] pt-5">
-                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#8b7355]/20 to-[#d4a574]/20 flex items-center justify-center text-xl flex-shrink-0 ring-2 ring-[#e0d5cb] group-hover:ring-[#8b7355]/30 transition-all duration-400">
+                  <div className="flex items-center gap-3 border-t border-[#e0d5cb] pt-4">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#8b7355]/20 to-[#d4a574]/20 flex items-center justify-center text-lg flex-shrink-0 ring-2 ring-[#e0d5cb] group-hover:ring-[#8b7355]/30 transition-all duration-400">
                       {t.avatar}
                     </div>
                     <div>
@@ -1378,6 +1362,49 @@ export default function LandingPage() {
               </article>
             ))}
           </div>
+          {/* Fade edges */}
+          <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#faf8f6] to-transparent pointer-events-none z-10" />
+          <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#faf8f6] to-transparent pointer-events-none z-10" />
+        </div>
+
+        {/* Row 2 — scroll right */}
+        <div className="relative overflow-hidden">
+          <div className="testimonial-track-right flex gap-4" style={{ width: 'max-content' }}>
+            {[...testimonials.slice(4), ...testimonials.slice(0, 4), ...testimonials.slice(4), ...testimonials.slice(0, 4)].map((t, i) => (
+              <article
+                key={i}
+                className="relative bg-white rounded-[24px] p-6 border border-[#e0d5cb] hover:border-[#8b7355]/40 hover:shadow-premium-lg transition-all duration-400 group overflow-hidden cursor-default flex-shrink-0"
+                style={{ width: '340px' }}
+              >
+                <div
+                  className="absolute -top-2 -left-1 text-[#e0d5cb]/70 group-hover:text-[#d4a574]/20 transition-colors duration-400 select-none pointer-events-none"
+                  style={{ fontSize: '6rem', lineHeight: 1, fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontWeight: 800 }}
+                  aria-hidden="true"
+                >"</div>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-1.5 mb-4">
+                    <Stars rating={t.rating} size={13} />
+                    <span className="text-[9px] font-bold text-[#d4a574] bg-[#d4a574]/10 px-2 py-0.5 rounded-full ml-1">Terverifikasi</span>
+                  </div>
+                  <blockquote className="text-[#2d2420] text-sm leading-[1.75] mb-5 font-medium line-clamp-3">
+                    {t.feedback}
+                  </blockquote>
+                  <div className="flex items-center gap-3 border-t border-[#e0d5cb] pt-4">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#8b7355]/20 to-[#d4a574]/20 flex items-center justify-center text-lg flex-shrink-0 ring-2 ring-[#e0d5cb] group-hover:ring-[#8b7355]/30 transition-all duration-400">
+                      {t.avatar}
+                    </div>
+                    <div>
+                      <p className="font-black text-[#2d2420] text-sm" style={{ letterSpacing: '-0.01em' }}>{t.name}</p>
+                      <p className="text-[10px] text-[#8b7355] font-medium mt-0.5">{t.role}</p>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+          {/* Fade edges */}
+          <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#faf8f6] to-transparent pointer-events-none z-10" />
+          <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#faf8f6] to-transparent pointer-events-none z-10" />
         </div>
       </section>
 
