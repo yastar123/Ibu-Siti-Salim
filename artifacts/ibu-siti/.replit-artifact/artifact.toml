@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Ibu Siti - Sewa Baju & Dekorasi Pernikahan"
+version = "1.0.0"
+id = "artifacts/ibu-siti"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21368
+
+[services.development]
+run = "pnpm --filter @workspace/ibu-siti run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/ibu-siti", "run", "build" ]
+publicDir = "artifacts/ibu-siti/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21368"
+BASE_PATH = "/"
