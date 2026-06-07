@@ -148,10 +148,11 @@ function ProductCard({
           <Stars rating={product.rating} />
           <span className="text-[10px] text-[#8b7355]">({product.reviews})</span>
         </div>
-        <div className="flex items-baseline gap-2">
+        <div className="flex items-baseline gap-2 flex-wrap">
           <span className="font-bold text-[#8b7355] text-sm">{product.price}</span>
+          <span className="text-[10px] text-[#8b7355]/60 font-medium">/hari</span>
           {product.originalPrice && (
-            <span className="text-[11px] text-[#8b7355]/55 line-through">{product.originalPrice}</span>
+            <span className="text-[11px] text-[#8b7355]/45 line-through">{product.originalPrice}</span>
           )}
         </div>
       </div>
@@ -176,6 +177,7 @@ export default function LandingPage() {
   const [faqOpen, setFaqOpen] = useState<number | null>(null)
   const [heroParallax, setHeroParallax] = useState(0)
   const [statsVisible, setStatsVisible] = useState(false)
+  const [scrollProgress, setScrollProgress] = useState(0)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const toastIdRef = useRef(0)
   const statsRef = useRef<HTMLDivElement>(null)
@@ -196,12 +198,14 @@ export default function LandingPage() {
     localStorage.setItem('ibu-siti-wishlist', JSON.stringify(wishlist))
   }, [wishlist])
 
-  /* ── Scroll: back-to-top + hero parallax ── */
+  /* ── Scroll: back-to-top + hero parallax + progress ── */
   useEffect(() => {
     const h = () => {
       const y = window.scrollY
       setShowBackToTop(y > 600)
       setHeroParallax(y * 0.28)
+      const docH = document.documentElement.scrollHeight - window.innerHeight
+      setScrollProgress(docH > 0 ? Math.min((y / docH) * 100, 100) : 0)
     }
     window.addEventListener('scroll', h, { passive: true })
     return () => window.removeEventListener('scroll', h)
@@ -428,8 +432,16 @@ export default function LandingPage() {
         </button>
       </div>
 
+      {/* ── Scroll Progress Bar ── */}
+      <div className="sticky top-0 z-[60] h-0.5 bg-[#e0d5cb]">
+        <div
+          className="h-full bg-gradient-to-r from-[#8b7355] to-[#d4a574] transition-none"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+
       {/* ── HEADER ── */}
-      <header className="sticky top-0 z-50 bg-white/96 backdrop-blur-md border-b border-[#e0d5cb]" style={{ boxShadow: '0 1px 12px rgba(45,36,32,0.07)' }}>
+      <header className="sticky top-0.5 z-50 bg-white/96 backdrop-blur-md border-b border-[#e0d5cb]" style={{ boxShadow: '0 1px 12px rgba(45,36,32,0.07)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-[60px] gap-3">
 
@@ -607,6 +619,23 @@ export default function LandingPage() {
                   <ArrowRight size={15} />
                 </a>
               </div>
+
+              {/* Trust badges */}
+              <div className="flex items-center gap-4 mt-7 animate-fade-in-up" style={{ animationDelay: '360ms' }}>
+                {[
+                  { val: '5.000+', lbl: 'Pelanggan Puas' },
+                  { val: '29 Th', lbl: 'Pengalaman' },
+                  { val: '4.9★', lbl: 'Rating' },
+                ].map((b, i) => (
+                  <div key={i} className="flex items-center gap-1.5">
+                    {i > 0 && <div className="w-px h-6 bg-white/25" />}
+                    <div>
+                      <p className="text-white text-sm font-bold leading-none">{b.val}</p>
+                      <p className="text-white/50 text-[9px] uppercase tracking-widest mt-0.5">{b.lbl}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -702,6 +731,73 @@ export default function LandingPage() {
               <MessageCircle size={16} />
               Mulai Konsultasi Gratis
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════
+          MENGAPA KAMI
+      ══════════════════════════════════ */}
+      <section className="py-16 sm:py-20 bg-[#2d2420] overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left copy */}
+            <div className="reveal-left">
+              <p className="text-[#d4a574] text-[10px] font-bold uppercase tracking-[0.2em] mb-3">Keunggulan Kami</p>
+              <h2 className="text-fluid-2xl font-bold text-white leading-tight mb-4">
+                Mengapa Ribuan Pengantin<br className="hidden sm:block" /> Memilih Ibu Siti?
+              </h2>
+              <p className="text-white/55 text-sm leading-relaxed mb-8 max-w-md">
+                Selama 29 tahun, kami telah mendampingi ribuan pasangan merayakan momen terindah dalam hidup mereka — dengan koleksi premium, pelayanan tulus, dan harga yang terjangkau.
+              </p>
+              <button
+                onClick={() => whatsapp()}
+                className="inline-flex items-center gap-2 bg-[#d4a574] hover:bg-[#c49562] text-[#2d2420] font-bold text-sm px-7 py-3.5 rounded-full transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+              >
+                <MessageCircle size={16} />
+                Konsultasi Gratis
+              </button>
+            </div>
+
+            {/* Right USP grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 reveal-right">
+              {[
+                {
+                  icon: '🏆',
+                  title: '29 Tahun Pengalaman',
+                  desc: 'Berdiri sejak 1995, kami adalah pilihan terpercaya keluarga Jakarta dan sekitarnya.',
+                },
+                {
+                  icon: '👗',
+                  title: '200+ Koleksi Eksklusif',
+                  desc: 'Gaun pengantin, kebaya, baju adat dari berbagai daerah — semuanya tersedia.',
+                },
+                {
+                  icon: '📦',
+                  title: 'Antar & Jemput Gratis',
+                  desc: 'Layanan pengiriman gratis ke seluruh Jabodetabek. Tidak perlu repot.',
+                },
+                {
+                  icon: '✂️',
+                  title: 'Fitting & Alterasi',
+                  desc: 'Tim tailor profesional kami memastikan setiap pakaian muat sempurna di badan Anda.',
+                },
+              ].map((usp, i) => (
+                <div
+                  key={usp.title}
+                  className="bg-white/6 hover:bg-white/10 border border-white/10 hover:border-[#d4a574]/40 rounded-2xl p-5 transition-all duration-300 group"
+                  style={{
+                    opacity: 0,
+                    animation: 'fadeInUp 0.5s ease forwards',
+                    animationDelay: `${i * 120}ms`,
+                  }}
+                >
+                  <span className="text-2xl block mb-3 group-hover:scale-110 transition-transform duration-300">{usp.icon}</span>
+                  <h3 className="font-bold text-white text-sm mb-1.5">{usp.title}</h3>
+                  <p className="text-white/45 text-xs leading-relaxed">{usp.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -1274,13 +1370,53 @@ export default function LandingPage() {
         </div>
       )}
 
-      {/* ── Floating WhatsApp Button ── */}
+      {/* ── Mobile Bottom Navigation ── */}
+      <nav className="sm:hidden fixed bottom-0 inset-x-0 z-50 bg-white/96 backdrop-blur-md border-t border-[#e0d5cb] px-2 pb-safe" style={{ boxShadow: '0 -1px 12px rgba(45,36,32,0.08)' }}>
+        <div className="flex items-center justify-around h-[60px]">
+          <a href="#" className="flex flex-col items-center gap-0.5 text-[#8b7355] min-w-[56px] py-1">
+            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#8b7355]"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            <span className="text-[9px] font-medium">Beranda</span>
+          </a>
+          <a href="#koleksi" className="flex flex-col items-center gap-0.5 text-[#2d2420]/40 min-w-[56px] py-1">
+            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M4 6h16v2H4zm2 5h12v2H6zm2 5h8v2H8z"/></svg>
+            <span className="text-[9px] font-medium">Koleksi</span>
+          </a>
+          <button
+            onClick={() => whatsapp()}
+            className="flex flex-col items-center gap-0.5 relative -top-3"
+          >
+            <span className="w-12 h-12 rounded-2xl bg-[#8b7355] flex items-center justify-center shadow-premium-lg">
+              <MessageCircle size={22} className="text-white" />
+            </span>
+            <span className="text-[9px] font-medium text-[#8b7355]">Tanya</span>
+          </button>
+          <button
+            onClick={() => {}}
+            className="flex flex-col items-center gap-0.5 text-[#2d2420]/40 min-w-[56px] py-1"
+          >
+            <Heart size={20} className={wishlist.length > 0 ? 'text-[#8b7355]' : ''} />
+            <span className="text-[9px] font-medium">Wishlist</span>
+            {wishlist.length > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#8b7355] text-white text-[8px] font-bold rounded-full flex items-center justify-center">{wishlist.length}</span>
+            )}
+          </button>
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="flex flex-col items-center gap-0.5 text-[#2d2420]/40 min-w-[56px] py-1"
+          >
+            <Search size={20} />
+            <span className="text-[9px] font-medium">Cari</span>
+          </button>
+        </div>
+      </nav>
+
+      {/* ── Floating WhatsApp Button (desktop only) ── */}
       <a
         href={`https://wa.me/62812345678?text=${encodeURIComponent('Halo Ibu Siti, saya ingin konsultasi tentang koleksi baju Anda.')}`}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat WhatsApp"
-        className="fixed bottom-6 left-5 sm:left-7 z-40 flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white font-semibold text-xs px-4 py-3 rounded-full shadow-premium-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group"
+        className="hidden sm:flex fixed bottom-6 left-7 z-40 items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white font-semibold text-xs px-4 py-3 rounded-full shadow-premium-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group"
       >
         {/* WhatsApp icon */}
         <svg viewBox="0 0 24 24" className="w-5 h-5 fill-white flex-shrink-0" xmlns="http://www.w3.org/2000/svg">
