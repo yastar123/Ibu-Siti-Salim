@@ -3,8 +3,29 @@ import {
   Heart, Search, ShoppingBag, Menu, X, MessageCircle, Star,
   ChevronUp, User, Truck, Headphones, RotateCcw, Shield,
   ArrowRight, Check, Phone, MapPin, Instagram, Facebook, Youtube,
-  ChevronDown
+  ChevronDown, Sparkles
 } from 'lucide-react'
+
+/* ─── Animated counter hook ─── */
+function useCountUp(target: number, duration = 1800, active = false) {
+  const [count, setCount] = useState(0)
+  useEffect(() => {
+    if (!active) { setCount(0); return }
+    let start = 0
+    const totalSteps = Math.ceil(duration / 16)
+    let step = 0
+    const timer = setInterval(() => {
+      step++
+      const progress = step / totalSteps
+      const ease = 1 - Math.pow(1 - progress, 3)
+      start = Math.round(ease * target)
+      setCount(start)
+      if (step >= totalSteps) { setCount(target); clearInterval(timer) }
+    }, 16)
+    return () => clearInterval(timer)
+  }, [active, target, duration])
+  return count
+}
 
 /* ─── Types ─── */
 type Product = {
@@ -339,11 +360,23 @@ export default function LandingPage() {
     { value: '4.9★', label: 'Rating Rata-rata' },
   ]
 
+  /* ─── Animated counters (must be top-level hooks, not inside .map()) ─── */
+  const cnt0 = useCountUp(5000, 1800, statsVisible)
+  const cnt1 = useCountUp(29, 1800, statsVisible)
+  const cnt2 = useCountUp(200, 1800, statsVisible)
+  const cnt3 = useCountUp(49, 1800, statsVisible)
+  const statDisplays = [
+    cnt0.toLocaleString('id-ID') + '+',
+    cnt1 + ' Th',
+    cnt2 + '+',
+    (cnt3 / 10).toFixed(1) + '★',
+  ]
+
   /* ══════════════════════════════════
      RENDER
   ══════════════════════════════════ */
   return (
-    <div className="min-h-screen bg-[#faf8f6] overflow-x-hidden">
+    <div className="min-h-screen bg-[#faf8f6] overflow-x-hidden pb-16 sm:pb-0">
 
       {/* ── Toast Notifications ── */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] flex flex-col gap-2 items-center pointer-events-none">
@@ -433,10 +466,10 @@ export default function LandingPage() {
       </div>
 
       {/* ── Scroll Progress Bar ── */}
-      <div className="sticky top-0 z-[60] h-0.5 bg-[#e0d5cb]">
+      <div className="sticky top-0 z-[60] h-[2px] bg-[#e0d5cb]">
         <div
-          className="h-full bg-gradient-to-r from-[#8b7355] to-[#d4a574] transition-none"
-          style={{ width: `${scrollProgress}%` }}
+          className="h-full bg-gradient-to-r from-[#8b7355] via-[#d4a574] to-[#a88968] transition-none shadow-sm"
+          style={{ width: `${scrollProgress}%`, boxShadow: scrollProgress > 0 ? '0 0 6px rgba(212,165,116,0.5)' : 'none' }}
         />
       </div>
 
@@ -581,8 +614,10 @@ export default function LandingPage() {
         {!heroLoaded && <div className="absolute inset-0 shimmer" />}
 
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#2d2420]/85 via-[#2d2420]/40 to-[#2d2420]/10" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#2d2420]/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#2d2420]/88 via-[#2d2420]/45 to-[#2d2420]/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#2d2420]/40 to-transparent" />
+        {/* Grain texture */}
+        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")', backgroundRepeat: 'repeat', backgroundSize: '150px' }} />
 
         {/* Content */}
         <div className="relative z-10 h-full flex items-center">
@@ -621,17 +656,18 @@ export default function LandingPage() {
               </div>
 
               {/* Trust badges */}
-              <div className="flex items-center gap-4 mt-7 animate-fade-in-up" style={{ animationDelay: '360ms' }}>
+              <div className="flex items-center gap-5 mt-7 animate-fade-in-up" style={{ animationDelay: '360ms' }}>
                 {[
                   { val: '5.000+', lbl: 'Pelanggan Puas' },
                   { val: '29 Th', lbl: 'Pengalaman' },
+                  { val: '200+', lbl: 'Koleksi' },
                   { val: '4.9★', lbl: 'Rating' },
                 ].map((b, i) => (
-                  <div key={i} className="flex items-center gap-1.5">
-                    {i > 0 && <div className="w-px h-6 bg-white/25" />}
+                  <div key={i} className="flex items-center gap-5">
+                    {i > 0 && <div className="w-px h-8 bg-white/20" />}
                     <div>
-                      <p className="text-white text-sm font-bold leading-none">{b.val}</p>
-                      <p className="text-white/50 text-[9px] uppercase tracking-widest mt-0.5">{b.lbl}</p>
+                      <p className="text-white text-sm font-extrabold leading-none tracking-tight">{b.val}</p>
+                      <p className="text-white/50 text-[9px] uppercase tracking-widest mt-1">{b.lbl}</p>
                     </div>
                   </div>
                 ))}
@@ -651,21 +687,24 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           STATS BAR
       ══════════════════════════════════ */}
-      <div className="bg-[#8b7355] py-7" ref={statsRef}>
+      <div className="bg-gradient-to-r from-[#7a6448] via-[#8b7355] to-[#a08060] py-8 sm:py-10" ref={statsRef}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 text-center">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 text-center">
             {stats.map((s, i) => (
               <div
                 key={i}
-                className="transition-all duration-700"
+                className="group transition-all duration-700"
                 style={{
                   opacity: statsVisible ? 1 : 0,
-                  transform: statsVisible ? 'translateY(0)' : 'translateY(20px)',
-                  transitionDelay: `${i * 120}ms`,
+                  transform: statsVisible ? 'translateY(0) scale(1)' : 'translateY(24px) scale(0.95)',
+                  transitionDelay: `${i * 130}ms`,
                 }}
               >
-                <p className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{s.value}</p>
-                <p className="text-white/65 text-[11px] mt-1 font-medium uppercase tracking-widest">{s.label}</p>
+                <p className="text-3xl sm:text-4xl font-black text-white tracking-tight tabular-nums" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.15)' }}>
+                  {statsVisible ? statDisplays[i] : s.value}
+                </p>
+                <div className="w-8 h-0.5 bg-white/30 mx-auto my-2 group-hover:w-14 transition-all duration-500 rounded-full" />
+                <p className="text-white/70 text-[10px] font-semibold uppercase tracking-[0.2em]">{s.label}</p>
               </div>
             ))}
           </div>
@@ -785,16 +824,12 @@ export default function LandingPage() {
               ].map((usp, i) => (
                 <div
                   key={usp.title}
-                  className="bg-white/6 hover:bg-white/10 border border-white/10 hover:border-[#d4a574]/40 rounded-2xl p-5 transition-all duration-300 group"
-                  style={{
-                    opacity: 0,
-                    animation: 'fadeInUp 0.5s ease forwards',
-                    animationDelay: `${i * 120}ms`,
-                  }}
+                  className="bg-white/6 hover:bg-white/10 border border-white/10 hover:border-[#d4a574]/40 rounded-2xl p-5 transition-all duration-300 group reveal"
+                  style={{ transitionDelay: `${i * 120}ms` }}
                 >
-                  <span className="text-2xl block mb-3 group-hover:scale-110 transition-transform duration-300">{usp.icon}</span>
-                  <h3 className="font-bold text-white text-sm mb-1.5">{usp.title}</h3>
-                  <p className="text-white/45 text-xs leading-relaxed">{usp.desc}</p>
+                  <span className="text-2xl block mb-3 group-hover:scale-110 transition-transform duration-300 origin-left">{usp.icon}</span>
+                  <h3 className="font-bold text-white text-sm mb-1.5 group-hover:text-[#d4a574] transition-colors duration-300">{usp.title}</h3>
+                  <p className="text-white/45 text-xs leading-relaxed group-hover:text-white/60 transition-colors duration-300">{usp.desc}</p>
                 </div>
               ))}
             </div>
@@ -867,38 +902,43 @@ export default function LandingPage() {
           </div>
 
           {/* Desktop: asymmetric grid */}
-          <div className="hidden sm:grid grid-cols-3 gap-4 lg:gap-5 h-[500px]">
+          <div className="hidden sm:grid grid-cols-3 gap-4 lg:gap-5" style={{ height: 'clamp(380px, 45vw, 520px)' }}>
             {/* Tall card */}
-            <div className="row-span-2 relative rounded-3xl overflow-hidden group cursor-pointer reveal-left">
-              <LazyImg src={categories[0].image} alt={categories[0].name} className="w-full h-full" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#2d2420]/80 via-[#2d2420]/20 to-transparent" />
+            <a href="#koleksi" className="row-span-2 relative rounded-3xl overflow-hidden group cursor-pointer reveal-left block">
+              <LazyImg src={categories[0].image} alt={categories[0].name} className="w-full h-full group-hover:scale-105 transition-transform duration-700" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#2d2420]/85 via-[#2d2420]/20 to-transparent group-hover:from-[#2d2420]/90 transition-all duration-300" />
               <div className="absolute bottom-0 left-0 right-0 p-6">
                 <p className="text-white/60 text-[10px] font-semibold uppercase tracking-widest mb-1">{categories[0].count}</p>
-                <h3 className="text-white font-bold text-xl mb-0.5">{categories[0].name}</h3>
+                <h3 className="text-white font-bold text-xl mb-0.5 group-hover:translate-y-[-2px] transition-transform duration-300">{categories[0].name}</h3>
                 <p className="text-white/70 text-xs">{categories[0].desc}</p>
+                <span className="inline-flex items-center gap-1 mt-3 text-[#d4a574] text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  Lihat Koleksi <ArrowRight size={10} />
+                </span>
               </div>
-            </div>
+            </a>
             {/* Two shorter cards */}
             {categories.slice(1).map((cat, i) => (
-              <div key={cat.id} className={`relative rounded-3xl overflow-hidden group cursor-pointer ${i === 0 ? 'reveal' : 'reveal-right'}`}>
-                <LazyImg src={cat.image} alt={cat.name} className="w-full h-full" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#2d2420]/80 via-[#2d2420]/10 to-transparent" />
+              <a href="#koleksi" key={cat.id} className={`relative rounded-3xl overflow-hidden group cursor-pointer block ${i === 0 ? 'reveal' : 'reveal-right'}`}>
+                <LazyImg src={cat.image} alt={cat.name} className="w-full h-full group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2d2420]/85 via-[#2d2420]/10 to-transparent group-hover:from-[#2d2420]/90 transition-all duration-300" />
                 <div className="absolute bottom-0 left-0 right-0 p-5">
                   <p className="text-white/60 text-[10px] font-semibold uppercase tracking-widest mb-1">{cat.count}</p>
-                  <h3 className="text-white font-bold text-lg">{cat.name}</h3>
+                  <h3 className="text-white font-bold text-lg group-hover:translate-y-[-2px] transition-transform duration-300">{cat.name}</h3>
                   <p className="text-white/70 text-xs mt-0.5">{cat.desc}</p>
+                  <span className="inline-flex items-center gap-1 mt-2 text-[#d4a574] text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    Lihat Koleksi <ArrowRight size={10} />
+                  </span>
                 </div>
-                <div className="absolute inset-0 group-hover:bg-[#8b7355]/20 transition-colors duration-300" />
-              </div>
+              </a>
             ))}
           </div>
 
           {/* Mobile: vertical stack */}
           <div className="sm:hidden grid grid-cols-1 gap-4">
             {categories.map(cat => (
-              <div key={cat.id} className="relative h-44 rounded-2xl overflow-hidden group cursor-pointer reveal">
-                <LazyImg src={cat.image} alt={cat.name} className="w-full h-full" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#2d2420]/70 to-[#2d2420]/20" />
+              <a href="#koleksi" key={cat.id} className="relative h-48 rounded-2xl overflow-hidden group cursor-pointer reveal block">
+                <LazyImg src={cat.image} alt={cat.name} className="w-full h-full group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#2d2420]/75 to-[#2d2420]/20" />
                 <div className="absolute inset-0 flex items-end p-5">
                   <div>
                     <p className="text-white/60 text-[10px] uppercase tracking-wider mb-0.5">{cat.count}</p>
@@ -906,7 +946,7 @@ export default function LandingPage() {
                     <p className="text-white/70 text-xs">{cat.desc}</p>
                   </div>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </div>
@@ -992,10 +1032,10 @@ export default function LandingPage() {
       {/* ══════════════════════════════════
           BRAND MARQUEE
       ══════════════════════════════════ */}
-      <section className="py-7 bg-[#2d2420] overflow-hidden" aria-hidden="true">
-        <div className="flex gap-10 animate-marquee whitespace-nowrap select-none">
+      <section className="py-6 bg-[#2d2420] overflow-hidden" aria-hidden="true">
+        <div className="flex gap-14 animate-marquee whitespace-nowrap select-none">
           {brandsFull.map((b, i) => (
-            <span key={i} className="text-white/40 text-xs font-bold uppercase tracking-[0.25em] flex-shrink-0 hover:text-white/70 transition-colors cursor-default">
+            <span key={i} className="text-white/35 text-[11px] font-bold uppercase tracking-[0.3em] cursor-default hover:text-[#d4a574]/70 transition-colors duration-300 flex-shrink-0">
               {b}
             </span>
           ))}
@@ -1216,9 +1256,16 @@ export default function LandingPage() {
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/40 mb-4">Menu</p>
               <ul className="space-y-2.5">
-                {['Beranda', 'Koleksi Terbaru', 'Kategori', 'Produk Unggulan', 'Koleksi Musiman', 'FAQ'].map(item => (
-                  <li key={item}>
-                    <a href="#" className="text-white/55 hover:text-white text-xs transition-colors">{item}</a>
+                {[
+                  { label: 'Beranda', href: '#' },
+                  { label: 'Koleksi Terbaru', href: '#koleksi' },
+                  { label: 'Kategori', href: '#kategori' },
+                  { label: 'Produk Unggulan', href: '#unggulan' },
+                  { label: 'Koleksi Musiman', href: '#musiman' },
+                  { label: 'FAQ', href: '#faq' },
+                ].map(({ label, href }) => (
+                  <li key={label}>
+                    <a href={href} className="text-white/55 hover:text-white text-xs transition-colors">{label}</a>
                   </li>
                 ))}
               </ul>
@@ -1271,7 +1318,7 @@ export default function LandingPage() {
           </div>
 
           <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/35">
-            <p>© 2024 Ibu Siti Wedding & Fashion. Semua hak dilindungi.</p>
+            <p>© {new Date().getFullYear()} Ibu Siti Wedding & Fashion. Semua hak dilindungi.</p>
             <div className="flex gap-5">
               {['Kebijakan Privasi', 'Syarat & Ketentuan'].map(s => (
                 <a key={s} href="#" className="hover:text-white/60 transition-colors">{s}</a>
@@ -1391,13 +1438,13 @@ export default function LandingPage() {
             <span className="text-[9px] font-medium text-[#8b7355]">Tanya</span>
           </button>
           <button
-            onClick={() => {}}
-            className="flex flex-col items-center gap-0.5 text-[#2d2420]/40 min-w-[56px] py-1"
+            onClick={() => { document.getElementById('koleksi')?.scrollIntoView({ behavior: 'smooth' }) }}
+            className="flex flex-col items-center gap-0.5 text-[#2d2420]/40 min-w-[56px] py-1 relative"
           >
-            <Heart size={20} className={wishlist.length > 0 ? 'text-[#8b7355]' : ''} />
+            <Heart size={20} className={wishlist.length > 0 ? 'text-[#8b7355] fill-[#8b7355]' : ''} />
             <span className="text-[9px] font-medium">Wishlist</span>
             {wishlist.length > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#8b7355] text-white text-[8px] font-bold rounded-full flex items-center justify-center">{wishlist.length}</span>
+              <span className="absolute top-0 right-2 w-4 h-4 bg-[#8b7355] text-white text-[8px] font-bold rounded-full flex items-center justify-center leading-none">{wishlist.length}</span>
             )}
           </button>
           <button
