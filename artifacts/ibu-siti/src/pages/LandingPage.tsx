@@ -514,48 +514,46 @@ export default function LandingPage() {
         </div>
       )}
 
-      {/* ── PROMO BAR ── */}
-      <div className="bg-[#2d2420] text-white text-center py-2.5 text-[11px] sm:text-xs font-medium tracking-wide">
-        🎊 Gratis Konsultasi +&nbsp;
-        <span className="text-[#d4a574] font-bold">Free Shipping</span>
-        &nbsp;untuk pemesanan pertama Anda!&nbsp;
-        <button onClick={() => whatsapp()} className="underline underline-offset-2 hover:text-[#d4a574] transition-colors ml-1">
-          Pesan Sekarang →
-        </button>
-      </div>
-
-      {/* ── Scroll Progress Bar ── */}
-      <div className="sticky top-0 z-[60] h-[2px] bg-[#e0d5cb]">
-        <div
-          className="h-full bg-gradient-to-r from-[#8b7355] via-[#d4a574] to-[#a88968] transition-none shadow-sm"
-          style={{ width: `${scrollProgress}%`, boxShadow: scrollProgress > 0 ? '0 0 6px rgba(212,165,116,0.5)' : 'none' }}
-        />
-      </div>
-
       {/* ── HEADER ── */}
       <header
-        className={`sticky top-0.5 z-50 nav-scrolled border-b transition-all duration-500 ${
-          navScrolled
-            ? 'bg-white/97 backdrop-blur-md border-[#e0d5cb]'
-            : 'bg-black/30 backdrop-blur-sm border-white/10'
+        className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          navScrolled ? 'top-3' : 'top-0'
         }`}
-        style={navScrolled ? { boxShadow: '0 1px 20px rgba(45,36,32,0.09)' } : {}}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-[64px] gap-3">
+        {/* The inner island wrapper */}
+        <div
+          className={`transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            navScrolled
+              ? 'mx-3 sm:mx-5 lg:mx-8 max-w-[1400px] xl:mx-auto bg-white/95 backdrop-blur-xl rounded-[20px] border border-[#e0d5cb]/70 px-3 sm:px-5'
+              : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
+          }`}
+          style={navScrolled ? { boxShadow: '0 8px 40px rgba(45,36,32,0.13), 0 2px 8px rgba(45,36,32,0.06)' } : {}}
+        >
+          <div className={`flex items-center justify-between gap-3 transition-all duration-500 ${navScrolled ? 'h-[58px]' : 'h-[68px]'}`}>
 
             {/* Logo */}
             <a href="#" className="flex-shrink-0 group" aria-label="Ibu Siti - Beranda">
-              <span className={`text-xl sm:text-2xl font-black tracking-tight transition-colors duration-400 ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white group-hover:text-[#d4a574]'}`} style={{ letterSpacing: '-0.02em' }}>
+              <span
+                className={`font-black tracking-tight transition-all duration-500 ${
+                  navScrolled
+                    ? 'text-lg sm:text-xl text-[#2d2420] group-hover:text-[#8b7355]'
+                    : 'text-xl sm:text-2xl text-white group-hover:text-[#d4a574]'
+                }`}
+                style={{ letterSpacing: '-0.02em' }}
+              >
                 Ibu Siti
               </span>
-              <span className={`text-[9px] font-bold block -mt-0.5 tracking-[0.18em] uppercase transition-colors duration-400 ${navScrolled ? 'text-[#8b7355]' : 'text-white/75'}`}>
+              <span
+                className={`text-[8px] font-bold block -mt-0.5 tracking-[0.18em] uppercase transition-all duration-500 ${
+                  navScrolled ? 'text-[#8b7355]' : 'text-white/75'
+                }`}
+              >
                 Wedding & Fashion
               </span>
             </a>
 
             {/* Desktop nav */}
-            <nav className="hidden lg:flex items-center gap-7">
+            <nav className="hidden lg:flex items-center gap-6">
               {[
                 { label: 'Koleksi', href: '#koleksi' },
                 { label: 'Kategori', href: '#kategori' },
@@ -566,10 +564,16 @@ export default function LandingPage() {
                 <a
                   key={label}
                   href={href}
-                  className={`text-[13px] font-semibold transition-colors duration-400 relative group py-1 ${navScrolled ? 'text-[#2d2420] hover:text-[#8b7355]' : 'text-white/80 hover:text-[#d4a574]'}`}
+                  className={`text-[13px] font-semibold transition-colors duration-300 relative group py-1 ${
+                    navScrolled ? 'text-[#2d2420] hover:text-[#8b7355]' : 'text-white/90 hover:text-[#d4a574]'
+                  }`}
                 >
                   {label}
-                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full ${navScrolled ? 'bg-[#8b7355]' : 'bg-[#d4a574]'}`} />
+                  <span
+                    className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full rounded-full ${
+                      navScrolled ? 'bg-[#8b7355]' : 'bg-[#d4a574]'
+                    }`}
+                  />
                 </a>
               ))}
             </nav>
@@ -577,22 +581,22 @@ export default function LandingPage() {
             {/* Right icons */}
             <div className="flex items-center gap-0.5 sm:gap-1">
               <button
-                aria-label="Cari produk (Ctrl+K)"
+                aria-label="Cari produk"
                 onClick={() => setSearchOpen(true)}
                 className={`p-2.5 rounded-full transition-colors group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
               >
-                <Search size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/80 group-hover:text-white'}`} />
+                <Search size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/90 group-hover:text-white'}`} />
               </button>
 
               <button aria-label="Akun saya" className={`p-2.5 rounded-full transition-colors group hidden sm:flex ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}>
-                <User size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/80 group-hover:text-white'}`} />
+                <User size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/90 group-hover:text-white'}`} />
               </button>
 
               <button
                 aria-label="Wishlist"
                 className={`p-2.5 rounded-full transition-colors relative group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
               >
-                <Heart size={18} className={wishlist.length > 0 ? 'fill-[#d4a574] text-[#d4a574]' : `transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/80 group-hover:text-white'}`} />
+                <Heart size={18} className={wishlist.length > 0 ? 'fill-[#d4a574] text-[#d4a574]' : `transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/90 group-hover:text-white'}`} />
                 {wishlist.length > 0 && (
                   <span className="absolute top-1 right-1 bg-[#d4a574] text-[#0e0b09] text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center leading-none">
                     {wishlist.length}
@@ -604,7 +608,7 @@ export default function LandingPage() {
                 aria-label="Keranjang"
                 className={`p-2.5 rounded-full transition-colors relative group ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
               >
-                <ShoppingBag size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/80 group-hover:text-white'}`} />
+                <ShoppingBag size={18} className={`transition-colors ${navScrolled ? 'text-[#2d2420] group-hover:text-[#8b7355]' : 'text-white/90 group-hover:text-white'}`} />
                 {cartCount > 0 && (
                   <span className="absolute top-1 right-1 bg-[#d4a574] text-[#0e0b09] text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center leading-none">
                     {cartCount}
@@ -616,7 +620,7 @@ export default function LandingPage() {
               <button
                 aria-label={mobileMenuOpen ? 'Tutup menu' : 'Buka menu'}
                 onClick={() => setMobileMenuOpen(o => !o)}
-                className={`lg:hidden p-2.5 rounded-full transition-colors ml-1 ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
+                className={`lg:hidden p-2.5 rounded-full transition-colors ml-0.5 ${navScrolled ? 'hover:bg-[#f5f0eb]' : 'hover:bg-white/10'}`}
               >
                 {mobileMenuOpen
                   ? <X size={20} className={navScrolled ? 'text-[#2d2420]' : 'text-white'} />
@@ -629,8 +633,15 @@ export default function LandingPage() {
 
         {/* Mobile menu drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-[#e0d5cb] bg-white animate-slide-down">
-            <div className="max-w-7xl mx-auto px-4 py-5 space-y-1">
+          <div
+            className={`lg:hidden mt-2 animate-slide-down ${
+              navScrolled ? 'mx-3 sm:mx-5 lg:mx-8' : 'mx-3'
+            }`}
+          >
+            <div
+              className="bg-white/96 backdrop-blur-xl rounded-[18px] border border-[#e0d5cb]/70 px-3 py-4 space-y-1"
+              style={{ boxShadow: '0 8px 40px rgba(45,36,32,0.12)' }}
+            >
               {[
                 { label: 'Koleksi Terbaru', href: '#koleksi' },
                 { label: 'Kategori', href: '#kategori' },
@@ -649,7 +660,7 @@ export default function LandingPage() {
                   <ArrowRight size={14} className="text-[#8b7355]" />
                 </a>
               ))}
-              <div className="pt-3 border-t border-[#e0d5cb]">
+              <div className="pt-2 border-t border-[#e0d5cb] mt-1">
                 <button
                   onClick={() => { whatsapp(); setMobileMenuOpen(false) }}
                   className="w-full flex items-center justify-center gap-2 bg-[#8b7355] text-white py-3 rounded-xl text-sm font-semibold hover:bg-[#7a6448] transition-colors"
